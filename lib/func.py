@@ -87,8 +87,7 @@ def write_log(frame: np.array, name: str, direction: str) -> None:
                              "In/Out": [direction],
                              "Name": [name.strip()],
                              "Path": [path]})
-    timedata.to_csv(log_dir[1] + '/log.csv', sep='\t',
-                    mode='a', index=False, header=False)
+    timedata.to_csv(log_dir[1] + '/log.csv', mode='a', index=False, header=False)
 
 
 def face_track(obj: list, obj_new: list, direction: str) -> list:
