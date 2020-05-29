@@ -6,12 +6,19 @@ import cv2
 import numpy as np
 from imutils.video import FPS
 
-from lib.func import draw, face_detect, face_track, getNames, write_log, VideoCapture  # noqa
-
+from lib.func import draw, face_detect, face_track, getNames
+from lib.func import VideoCapture
 # endregion
 
 
 # region DEF
+def config(d):
+    f = open('config', 'r')
+    data = f.read().split('\n')[0:2]
+    data = list(map(lambda x: list(map(int, x.split(', '))), data))
+    return data[d]
+
+
 def transform(frame: np.array) -> np.array:
     try:
         frame = cv2.resize(frame, (width, height))
@@ -77,7 +84,7 @@ def main() -> None:
             crop_boundary = boundary_update(crop_boundary, box)
 
         if len(obj) != 0:
-            obj = face_track(obj, obj_new, 'Out')
+            obj = face_track(obj, obj_new, args['direction'])
             counter = 0
         else:
             obj = obj_new
@@ -90,9 +97,9 @@ def main() -> None:
             draw(frame, boxes, info)
 
         # region INFO2FRAME
-        cv2.rectangle(frame, (crop_boundary[3], crop_boundary[2]),
-                      (crop_boundary[1], crop_boundary[0]), (0, 255, 0), 2)
-        text = 'Out: {}'.format(inout[0])
+        # cv2.rectangle(frame, (crop_boundary[3], crop_boundary[2]),
+        #               (crop_boundary[1], crop_boundary[0]), (0, 255, 0), 2)
+        text = '{}: {}'.format(args['direction'], inout[0])
         cv2.putText(frame, text, (50, 50), cv2.FONT_HERSHEY_SIMPLEX,
                     0.75, (0, 255, 0), 2)
         frame = cv2.resize(frame, (720, 560))
@@ -110,7 +117,8 @@ def main() -> None:
             writer.write(frame)
         fps.update()
 
-    writer.release()
+    if writer is not None:
+        writer.release()
     video.stop()
     fps.stop()
     print(fps.fps())
@@ -124,8 +132,10 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument('-i', '--input', required=True,
                     help='Path to input source')
-    ap.add_argument('-o', '--output', default='out.mp4',
+    ap.add_argument('-o', '--output', default=None,
                     help='Out put MP4 file')
+    ap.add_argument('-d', '--direction', default=None,
+                    help='If input is not "cam-in" or "cam-out", specify In/Out')
     ap.add_argument('-l', '--log-folder', default='log',
                     help='Path to log folder')
     ap.add_argument('-e', '--encodings', default='encodings.pickle',
@@ -140,20 +150,28 @@ if __name__ == '__main__':
     src = args['input']
     if src == 'cam-in':
         src = 'rtsp://192.168.200.79:554/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream' # noqa
-        args['output'] = None
+        args['direction'] = 'In'
         time.sleep(30)
     elif src == 'cam-out':
         src = 'rtsp://192.168.200.80:555/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream' # noqa
-        args['output'] = None
+        args['direction'] = 'Out'
         time.sleep(30)
     elif '192.168' in src:
         src = 'rtsp://' + src + '/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream' # noqa
-        args['output'] = None
         time.sleep(30)
+
+    if args['direction'] is None:
+        raise SyntaxError('If input is not "cam-in" or "cam-out", \
+            specify [-d][--direction] as In or Out')
+    else:
+        args['direction'] = args['direction'].capitalize()
+        if args['direction'] == 'Out':
+            boundary_values = config(0)
+        else:
+            boundary_values = config(1)
     # endregion
 
     inout = np.array((0, 0), dtype='int')
-    boundary_values = [375, 200, 350, 275]
     boundary_values = [boundary_values[1],
                        boundary_values[0] + boundary_values[2],
                        boundary_values[1] + boundary_values[3],
