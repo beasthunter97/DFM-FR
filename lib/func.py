@@ -188,6 +188,12 @@ def same_face_condition(old: dict, new: dict) -> bool:
     return same
 
 
+class _Queue(Queue):
+
+    def remove(self):
+        self.queue.remove(self.queue[np.random.randint(self.maxsize)])
+
+
 class VideoCapture:
 
     def __init__(self, src, transform=None, queue_size=20):
@@ -196,7 +202,7 @@ class VideoCapture:
         self.stopped = False
         self.transform = transform
         self.src_is_vid = src[-3:] in 'm4v avi mp4'
-        self.Q = Queue(maxsize=queue_size)
+        self.Q = _Queue(maxsize=queue_size)
         self.thread = Thread(target=self.update, args=())
         self.thread.daemon = True
 
@@ -218,7 +224,7 @@ class VideoCapture:
                     frame = self.transform(frame)
                 self.Q.put(frame)
             else:
-                self.Q.remove(self.Q[np.random.randint(20)])
+                self.Q.remove()
                 time.sleep(0.025)
 
         self.stream.release()
