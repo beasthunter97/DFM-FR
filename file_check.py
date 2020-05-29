@@ -16,6 +16,7 @@ def config(d):
     f = open('config', 'r')
     data = f.read().split('\n')[0:2]
     data = list(map(lambda x: list(map(int, x.split(', '))), data))
+    f.close()
     return data[d]
 
 
