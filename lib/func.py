@@ -218,7 +218,8 @@ class VideoCapture:
                     frame = self.transform(frame)
                 self.Q.put(frame)
             else:
-                time.sleep(0.05)
+                self.Q.remove(self.Q[np.random.randint(20)])
+                time.sleep(0.025)
 
         self.stream.release()
 
