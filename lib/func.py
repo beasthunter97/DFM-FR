@@ -1,5 +1,7 @@
 import os
 import time
+from queue import Queue
+from threading import Thread
 
 import cv2
 import face_recognition
@@ -85,8 +87,7 @@ def write_log(frame: np.array, name: str, direction: str) -> None:
                              "In/Out": [direction],
                              "Name": [name.strip()],
                              "Path": [path]})
-    timedata.to_csv(log_dir[1] + '/log.csv', sep='\t',
-                    mode='a', index=False, header=False)
+    timedata.to_csv(log_dir[1] + '/log.csv', mode='a', index=False, header=False)
 
 
 def face_track(obj: list, obj_new: list, direction: str) -> list:
@@ -185,3 +186,52 @@ def same_face_condition(old: dict, new: dict) -> bool:
     else:
         same = True
     return same
+
+
+class _Queue(Queue):
+
+    def remove(self):
+        self.queue.remove(self.queue[np.random.randint(self.maxsize)])
+
+
+class VideoCapture:
+
+    def __init__(self, src, transform=None, queue_size=20):
+
+        self.stream = cv2.VideoCapture(src)
+        self.stopped = False
+        self.transform = transform
+        self.src_is_vid = src[-3:] in 'm4v avi mp4'
+        self.Q = _Queue(maxsize=queue_size)
+        self.thread = Thread(target=self.update, args=())
+        self.thread.daemon = True
+
+    def start(self):
+        self.thread.start()
+        return self
+
+    def update(self):
+        while True:
+
+            if self.stopped:
+                break
+            if not self.Q.full():
+                (grabbed, frame) = self.stream.read()
+                if not grabbed:
+                    self.stopped = self.src_is_vid
+
+                if self.transform:
+                    frame = self.transform(frame)
+                self.Q.put(frame)
+            else:
+                self.Q.remove()
+                time.sleep(0.025)
+
+        self.stream.release()
+
+    def read(self):
+        return self.Q.get()
+
+    def stop(self):
+        self.stopped = True
+        self.thread.join()
