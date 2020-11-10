@@ -54,7 +54,7 @@ def main(img_queue, temper):
         # -------------------------CHECK TEMPERATURE------------------------- #
         if temper.value > config.oper['max_temp']:
             print('Overheated, sleep for 5 seconds')
-            time.sleep(config.oper['sleep'])
+            time.sleep(config.oper['overheated_sleep'])
             temper.value = 0
         # ------------------------------------------------------------------- #
         # -------------------------READ & CHECK FRAME------------------------ #
@@ -65,8 +65,8 @@ def main(img_queue, temper):
             break
         # ------------------------------------------------------------------- #
         # -------------------------------MAIN-1------------------------------ #
+        boxes, faces = detector.detect(frame, True)
         if config.oper['mode']:
-            boxes, faces = detector.detect(frame, True)
             preds = recognizer.recognize(faces)
             objs, datas = tracker.track(boxes, preds, faces)
             names = []
@@ -93,14 +93,15 @@ def main(img_queue, temper):
                 stream.stop()
                 img_queue.put('stop')
                 break
-        else:
-            # ------------------------------------------------------------------- #
-            # -------------------------FRAME SKIP COUNTER------------------------ #
+        # ------------------------------------------------------------------- #
+        # -------------------------------MAIN-2------------------------------ #
+        if config.oper['mode'] < 2:
+            # --------------------------------------------------------------- #
+            # -----------------------FRAME SKIP COUNTER---------------------- #
             counter += 1
             if counter % config.oper['frame_per_capture'] != 0:
-                counter = 0
                 continue
-            _, faces = detector.detect(frame, True)
+            counter = 0
             for face in faces:
                 img_queue.put({
                     'timestamp': int(time.time()),
