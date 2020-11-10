@@ -1,0 +1,12 @@
+[Unit]
+Description=DFM multi camera counter
+
+[Service]
+WorkingDirectory=/home/mendel/coral/code/DFM-counter/
+User=mendel
+ExecStart=/usr/bin/python3 /home/mendel/coral/code/file.py
+Restart=always
+Environment=XAUTHORITY=/home/mendel/.Xauthority
+
+[Install]
+WantedBy=multi-user.target
