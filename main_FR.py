@@ -8,16 +8,18 @@ from imutils.video import FileVideoStream, WebcamVideoStream
 
 from lib.server import server_send, temp
 from lib.tflite import Detector, Recognizer
-from lib.track import Tracker
+from lib.track import Tracker, image_encode
 from lib.utils import ConfigHandler, draw
 
 
 def parse_arg():
     ap = argparse.ArgumentParser()
-    ap.add_argument('-s', '--source', required=True,
+    ap.add_argument('-s', '--source', default='vid', choices=('cam', 'vid'),
                     help='Select input source, "cam" or "vid"')
     ap.add_argument('-v', '--vid-path', default='test/videos/test2.m4v',
                     help='Path to video input when source is "vid"')
+    ap.add_argument('-d', '--direction', required=True, choices=('in', 'out'),
+                    help='Camera tracking direction "in" or "out"')
     args = vars(ap.parse_args())
     return args
 
@@ -25,21 +27,24 @@ def parse_arg():
 def init_constant():
     global config, src, stream, detector, recognizer, args, tracker
     source = args['source']
+    dir_ = args['direction'].lower()
+
+    if source == 'cam':
+        VS = WebcamVideoStream
+        src = config.stream[dir_]
+    else:
+        VS = FileVideoStream
+        src = args['vid_path']
+    stream = VS(src).start()
+
     detector = Detector(config.path['detect_model'],
                         config.model_setting['min_face_HD'],
                         config.model_setting['threshold'])
     recognizer = Recognizer(config.path['recog_model'],
                             config.path['labels'])
-    tracker = Tracker('OUT', 10)
-    if source == 'cam':
-        VS = WebcamVideoStream
-        src = config.stream['out']
-    elif source == 'vid':
-        VS = FileVideoStream
-        src = args['vid_path']
-    else:
-        raise ValueError('source must be "cam" or "vid"')
-    stream = VS(src).start()
+    tracker = Tracker(dir_, config.tracker['min_dist'][dir_],
+                      config.tracker['min_appear'][dir_],
+                      config.tracker['max_disappear'][dir_])
 
 
 def main(img_queue, temper):
@@ -59,14 +64,8 @@ def main(img_queue, temper):
             img_queue.put('stop')
             break
         # ------------------------------------------------------------------- #
-        # -------------------------FRAME SKIP COUNTER------------------------ #
-        counter += 1
-        if counter % config.oper['frame_per_capture'] != 0:
-            counter = 0
-            continue
-        # ------------------------------------------------------------------- #
         # -------------------------------MAIN-1------------------------------ #
-        if config.mode:
+        if config.oper['mode']:
             boxes, faces = detector.detect(frame, True)
             preds = recognizer.recognize(faces)
             objs, datas = tracker.track(boxes, preds, faces)
@@ -95,7 +94,20 @@ def main(img_queue, temper):
                 img_queue.put('stop')
                 break
         else:
-            boxes, faces = detector.detect(frame, True)
+            # ------------------------------------------------------------------- #
+            # -------------------------FRAME SKIP COUNTER------------------------ #
+            counter += 1
+            if counter % config.oper['frame_per_capture'] != 0:
+                counter = 0
+                continue
+            _, faces = detector.detect(frame, True)
+            for face in faces:
+                img_queue.put({
+                    'timestamp': int(time.time()),
+                    'camera': args['direction'],
+                    'name': '',
+                    'capture': image_encode(face)
+                })
 
 
 if __name__ == "__main__":
