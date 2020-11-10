@@ -8,72 +8,112 @@ from requests import ConnectionError
 from lib.utils import random_name
 
 
-def check_temp(temper, t_temp, url):
-    if time.time() - t_temp > 60:
-        out = subprocess.Popen(['cat', '/sys/class/thermal/thermal_zone0/temp'],
-                               stdout=subprocess.PIPE).communicate()[0]
+class Server:
+    """Handling server procedure
+    """
+    def __init__(self, url_capture: str, url_status: str,
+                 max_temp: int, time_check_temp: int):
+        """Initialize
 
-        temper.value = int(out.decode("utf-8").split('000')[0])
-        print('temp: {}'.format(temper.value))
-        data = {
-            "bus": 1,
-            "temperature": temper.value,
-            "timestamp": int(time.time()),
-            "status": 1
-        }
-        try:
-            requests.post(url, data=data, verify=False)
-        except ConnectionError:
-            pass
-        return True
+        Args:
+            url_capture (str): URL to capture server
+            url_status (str): URL to status server
+            max_temp (int): Max device's temperature
+            time_check_temp (int): Time cycle to check temperature
+        """
+        self.temp = 0
+        self.url_capture = url_capture
+        self.url_status = url_status
+        self.stop = False
+        self.max_temp = max_temp
+        self.time_check_temp = time_check_temp
+        self.temp_time = time.time()
 
+    def check_device_status(self):
+        if time.time() - self.temp_time > self.time_check_temp:
+            out = subprocess.Popen(['cat', '/sys/class/thermal/thermal_zone0/temp'],
+                                   stdout=subprocess.PIPE).communicate()[0]
 
-def server_send(img_queue, temper, config, method='post'):
-    url = config.url['capture']
-    url_ = config.url['status']
-    stop = False
-    t_temp = time.time()
-    while True:
-        if check_temp(temper, t_temp, url_):
-            t_temp = time.time()
-        if img_queue.empty():
-            data = load_temp()
-            if data is None:
-                if stop:
-                    break
-                continue
+            self.temp = int(out.decode("utf-8").split('000')[0])
+            data = {
+                "temperature": self.temp,
+                "timestamp": int(time.time()),
+                "status": 1
+            }
+            try:
+                requests.post(self.url_status, data=data, verify=False)
+                if requests.status_codes == 200:
+                    if self.temp > self.max_temp:
+                        self.device_status = 'Overheated (%d)' % self.temp
+                    else:
+                        self.device_status = 'Normal (%d)' % self.temp
+                else:
+                    self.device_status = 'Error ' + requests.status_codes
+            except ConnectionError:
+                self.device_status = 'No internet connection'
+            self.temp_time = time.time()
         else:
-            data = []
+            self.device_status = None
+
+    def get_data(self, img_queue):
+        if img_queue.empty():
+            self.data = load_temp()
+            if self.data is None:
+                if self.stop:
+                    return 'break'
+                return 'continue'
+        else:
+            self.data = []
             if img_queue.qsize() < 10:
                 time.sleep(0.5)
             for _ in range(int(min(img_queue.qsize(), 10))):
                 dat = img_queue.get()
                 if dat == 'stop':
-                    stop = True
+                    self.stop = True
                     continue
-                data.append(dat)
-        print("Queue received")
+                self.data.append(dat)
+
+    def server_send(self):
         start_time = time.time()
         try:
-            respond = requests.post(url, json=data, verify=False)
+            respond = requests.post(self.url_capture, json=self.data, verify=False)
             if respond.status_code == 200:
-                status = 'Success'
+                server_status = 'Success'
             elif respond.status_code == 429:
-                status = 'Too many requests'
+                server_status = 'Too many requests'
             else:
-                status = 'Error: ' + respond.status_code
+                server_status = 'Error ' + respond.status_code
         except ConnectionError:
-            status = 'No internet connection'
-        print('Time cost %.2f second(s) | Status: %s' % (time.time() - start_time,
-                                                         status))
-        if status == 'Too many requests':
-            time.sleep(5)
-        if status != 'Success':
-            temp(data)
+            server_status = 'No internet connection'
+        total = time.time() - start_time
+        self.server_status = (total, server_status)
+
+
+def server_send(img_queue, temper, config, method='post'):
+    server = Server(config.url['capture'], config.url['status'],
+                    config.oper['max_temp'], config.oper['time_check_temp'])
+    while True:
+        server.check_device_status()
+        if server.device_status is not None:
+            temper.value = server.temp
+            print('[DEVICE] Status: %s' % server.device_status)
+
+        command = server.get_data(img_queue)
+        if command == 'continue':
+            continue
+        elif command == 'break':
+            break
+
+        server.server_send()
+        print('[SERVER] Time cost %.2f second(s) | Status: %s' % server.server_status)
+        if server.server_status[1] == 'Too many requests':
+            time.sleep(3)
+        if server.server_status[1] != 'Success':
+            temp(server.data)
             time.sleep(2)
 
 
-def temp(data, img_queue=None):
+def temp(data: any, img_queue=None):
     if isinstance(data, list):
         file_name = random_name(16)
         with open(file_name, 'w') as file:
