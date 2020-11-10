@@ -32,4 +32,4 @@ oper:
   frame_per_capture: 5
   max_temp: 60
   time_check_temp: 60
-  sleep: 5
+  overheated_sleep: 5
