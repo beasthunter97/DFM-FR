@@ -12,8 +12,8 @@ def image_encode(img):
 
 
 class Tracker:
-    def __init__(self, dir='OUT', min_dist=10, min_appear=3, max_disappear=7):
-        self.dir = dir
+    def __init__(self, direction='OUT', min_dist=10, min_appear=3, max_disappear=7):
+        self.dir = direction
         self.min_dist = min_dist
         self.min_appear = min_appear
         self.max_disappear = max_disappear
