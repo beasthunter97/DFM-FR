@@ -12,13 +12,24 @@ url:
   status: http://htv.ai.dfm-engineering.com/api/v1/admin/public/device-info
 
 model_setting:
-  min_face_HD: 64
-  min_face_FHD: 96
+  min_face_HD: 80
+  min_face_FHD: 112
   threshold: 0.3
 
+tracker:
+  min_dist:
+    in: 10
+    out: 10
+  min_appear:
+    in: 3
+    out: 3
+  max_disappear:
+    in: 7
+    out: 7
+
 oper:
+  mode: 1
+  frame_per_capture: 5
   max_temp: 60
   time_check_temp: 60
   sleep: 5
-  mode: 0
-  frame_per_capture: 1
