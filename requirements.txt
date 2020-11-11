@@ -2,3 +2,5 @@ numpy
 pandas
 pyyaml
 requests
+scipy
+imutils
