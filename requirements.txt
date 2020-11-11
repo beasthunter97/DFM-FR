@@ -4,4 +4,3 @@ pyyaml
 requests
 scipy
 imutils
-opencv-python
