@@ -1,11 +1,13 @@
 [Unit]
-Description=DFM multi camera counter
+Description=systemd object detection service
 
 [Service]
-WorkingDirectory=/home/mendel/coral/DFM-FR/
+Type=simple
 User=mendel
-ExecStart=/bin/bash /home/mendel/coral/DFM-FR/test_script.sh
+WorkingDirectory=/home/mendel/coral/DFM_FR/
+ExecStart=/bin/bash /home/mendel/coral/DFM_FR/test_script.sh
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
+
