@@ -6,6 +6,7 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=mendel
+Environment=DISPLAY=:0
 WorkingDirectory=/home/mendel/coral/DFM_FR/
 ExecStart=/bin/bash /home/mendel/coral/DFM_FR/test_script.sh
 Restart=always
