@@ -1,5 +1,7 @@
 [Unit]
-Description=systemd object detection service
+Description=DFM AI Service
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple

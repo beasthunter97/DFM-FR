@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sleep 10s
+sleep 1s
 
 cd /home/mendel/coral/DFM_FR/
 
