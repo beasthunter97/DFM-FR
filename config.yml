@@ -4,7 +4,32 @@ path:
   labels:
 
 stream:
-- rtsp://192.168.200.80:555/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream
-- rtsp://192.168.200.78:556/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream
+  out: rtsp://192.168.200.80:555/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream
+  in: rtsp://192.168.200.78:556/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream
 
-url: http://htv.ai.dfm-engineering.com/api/v1/admin/public/uplink
+url:
+  capture: http://htv.ai.dfm-engineering.com/api/v1/admin/public/uplink
+  status: http://htv.ai.dfm-engineering.com/api/v1/admin/public/device-info
+
+model_setting:
+  min_face_HD: 72
+  min_face_FHD: 96
+  threshold: 0.3
+
+tracker:
+  min_dist:
+    in: 10
+    out: 10
+  min_appear:
+    in: 3
+    out: 3
+  max_disappear:
+    in: 7
+    out: 7
+
+oper:
+  mode: 1 # 0: send data only, 1: send data & tracking, 2: tracking only
+  frame_per_capture: 5
+  max_temp: 60
+  time_check_temp: 60
+  overheated_sleep: 5
