@@ -1,0 +1,11 @@
+[Unit]
+Description=DFM multi camera counter
+
+[Service]
+WorkingDirectory=/home/mendel/coral/DFM-FR/
+User=mendel
+ExecStart=/bin/bash /home/mendel/coral/DFM-FR/test_script.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
