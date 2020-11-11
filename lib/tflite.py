@@ -51,37 +51,38 @@ def fix_box(x1, y1, x2, y2):
     if h < w:
         d = (w - h) // 2
         x1 += d
-        x2 -= d
+        x2 -= d + w - h - d*2
     elif w < h:
         d = (h - w) // 2
         y1 += d
-        y2 -= d
+        y2 -= d + h - w - d*2
     return x1, y1, x2, y2
 
 
 class Detector:
-    def __init__(self, model_path):
+    def __init__(self, model_path, min_face_size=0, threshold=0.3):
         self.model = make_interpreter(model_path)
         self.model.allocate_tensors()
+        self.min_face_size = min_face_size
+        self.threshold = threshold
 
-    def detect(self, images, return_faces=False, threshold=0.3):
+    def detect(self, images, return_faces=False):
         h, w = images.shape[:2]
         inp = cv2.cvtColor(images, cv2.COLOR_BGR2RGB)
         inp = cv2.resize(inp, (320, 320))
         set_input(self.model, inp)
         self.model.invoke()
-        face_index = []
         confidence = output_tensor(self.model, 2)
-        boxes = output_tensor(self.model, 0)
+        output_boxes = output_tensor(self.model, 0)
+        boxes = []
         for i in range(int(output_tensor(self.model, 3))):
-            if confidence[i] > threshold:
-                face_index.append(i)
-        boxes = boxes[face_index]
-        for i, (y1, x1, y2, x2) in enumerate(boxes):
-            x1, x2 = max(0, int(w * x1)), min(w, int(x2 * w))
-            y1, y2 = max(0, int(h * y1)), min(h, int(y2 * h))
-            boxes[i] = fix_box(x1, y1, x2, y2)
-        boxes = boxes.astype(int)
+            if confidence[i] > self.threshold:
+                y1, x1, y2, x2 = output_boxes[i]
+                x1, x2 = max(0, int(w * x1)), min(w, int(x2 * w))
+                y1, y2 = max(0, int(h * y1)), min(h, int(y2 * h))
+                x1, y1, x2, y2 = fix_box(x1, y1, x2, y2)
+                if self.min_face_size <= (y2 - y1):
+                    boxes.append([x1, y1, x2, y2])
         if return_faces:
             faces = []
             for x1, y1, x2, y2 in boxes:
@@ -110,5 +111,5 @@ class Recognizer:
                 self.model.invoke()
                 names.append(self.labels[output_tensor(self.model, 0).argmax()])
         else:
-            names = [''] * len(images)
+            names = [{'TEMP': 1}] * len(images)
         return names

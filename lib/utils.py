@@ -1,20 +1,14 @@
-import base64
 import os
 import random
 import string
-import time
 
 import cv2
-import requests
 import yaml
-from requests.exceptions import ConnectionError
 
 
 class ConfigHandler:
-    def __init__(self, config_path='config.yml'):
-        self.file_path = config_path
-
-    def read(self, keywords=[]):
+    def read(self, file_path='config.yml', keywords=[]):
+        self.file_path = file_path
         if not hasattr(self, 'config'):
             with open(self.file_path, 'r') as file:
                 self.config = yaml.full_load(file)
@@ -58,77 +52,12 @@ def draw(image, boxes, names):
                     cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 1)
 
 
-def server_send(img_queue, url, method='post'):
-    while True:
-        from_temp = True
-        if img_queue.empty():
-            data = load_temp()
-            if data is None:
-                time.sleep(1)
-                continue
-        else:
-            data = img_queue.get()
-            from_temp = False
-        start_time = time.time()
-        print("Queue received")
-        if data == 'stop':
-            break
-        try:
-            respond = requests.post(url, data=data, verify=False)
-            if respond.status_code == 200:
-                print('Success')
-            elif respond.status_code == 429:
-                time.sleep(5)
-                if not from_temp:
-                    img_queue.put(data)
-                else:
-                    temp(data)
-            else:
-                print(respond.status_code)
-                if not from_temp:
-                    img_queue.put(data)
-                else:
-                    temp(data)
-        except ConnectionError:
-            print('Check internet connection.')
-            if not from_temp:
-                img_queue.put(data)
-            else:
-                temp(data)
-        print('Time cost %.2f second(s)' % (time.time() - start_time))
-
-
-def image_encode(img):
-    _, buffer = cv2.imencode('.jpg', img)
-    return base64.b64encode(buffer)
-
-
-def random_name(length=16):
-    os.makedirs('temp/', exist_ok=True)
+def random_name(length=16, root='temp/', ext=''):
+    os.makedirs(root, exist_ok=True)
     character = string.ascii_letters + string.digits
     while True:
-        file_name = 'temp/' + ''.join(random.choice(character) for _ in range(length))
+        file_name = root + ''.join(random.choice(character) for _ in range(length)) + ext
         if os.path.exists(file_name):
             continue
         break
     return file_name
-
-
-def temp(data):
-    file_name = random_name(16)
-    with open(file_name, 'w') as file:
-        file.write(str(data))
-
-
-def load_temp():
-    retval = None
-    for root, dirs, files in os.walk('temp/'):
-        if files == []:
-            break
-        else:
-            file_name = '/'.join((root, files[0]))
-            with open(file_name, 'r') as file:
-                data = file.read()
-                retval = eval(data)
-            os.remove(file_name)
-    return retval
