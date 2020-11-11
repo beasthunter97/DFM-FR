@@ -1,12 +1,15 @@
 [Unit]
-Description=DFM multi camera counter
+Description=DFM AI Service
+After=network-online.target
+Wants=network-online.target
 
 [Service]
-WorkingDirectory=/home/mendel/coral/code/DFM-counter/
+Type=simple
 User=mendel
-ExecStart=/usr/bin/python3 /home/mendel/coral/code/file.py
+WorkingDirectory=/home/mendel/coral/DFM_FR/
+ExecStart=/bin/bash /home/mendel/coral/DFM_FR/test_script.sh
 Restart=always
-Environment=XAUTHORITY=/home/mendel/.Xauthority
 
 [Install]
 WantedBy=multi-user.target
+
