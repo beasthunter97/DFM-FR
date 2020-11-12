@@ -109,9 +109,6 @@ def main(img_queue, temper):
                     'name': '',
                     'capture': image_encode(face)
                 })
-    print('testing')
-    time.sleep(10)
-    print('testing')
 
 
 if __name__ == "__main__":
@@ -128,3 +125,6 @@ if __name__ == "__main__":
     main_process.start()
     main_process.join()
     server_process.join()
+    print('testing')
+    time.sleep(10)
+    print('testing')
