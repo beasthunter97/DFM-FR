@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source /home/mendel/.bashrc
+
 cd /home/mendel/coral/DFM_FR/
 
 # if ping -c 2 192.168.20.78 &> /dev/null
@@ -24,6 +25,7 @@ cd /home/mendel/coral/DFM_FR/
 #   status=0
 # fi
 
+nohup python3 main_FR.py -s vid -v test1.m -d out > python_log.txt
+
 git pull > update_log.txt
 
-nohup python3 main_FR.py -s vid -v test1.m -d out > python_log.txt
