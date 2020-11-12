@@ -125,6 +125,3 @@ if __name__ == "__main__":
     main_process.start()
     main_process.join()
     server_process.join()
-    print('testing')
-    time.sleep(10)
-    print('testing')
