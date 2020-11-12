@@ -25,7 +25,4 @@ cd /home/mendel/coral/DFM_FR/
 #   status=0
 # fi
 
-nohup python3 main_FR.py -s vid -v test1.m -d out > python_log.txt
-
-git pull > update_log.txt
-
+nohup python3 main_FR.py -s vid -v test1.m -d out > python_log.txt & (sleep 10s; git pull > update_log.txt)
