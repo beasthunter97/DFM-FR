@@ -85,14 +85,14 @@ def main(img_queue, temper):
                     temp(data, img_queue)
                 else:
                     img_queue.put(data)
-            draw(frame, boxes, names)
-            time.sleep(0.05)
-            cv2.imshow('frame', cv2.resize(frame, (720, 540)))
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                stream.stop()
-                img_queue.put('stop')
-                break
+            if config.oper['dislay']:
+                draw(frame, boxes, names)
+                cv2.imshow('frame', cv2.resize(frame, (720, 540)))
+                key = cv2.waitKey(1) & 0xFF
+                if key == ord('q'):
+                    stream.stop()
+                    img_queue.put('stop')
+                    break
         # ------------------------------------------------------------------- #
         # -------------------------------MAIN-2------------------------------ #
         if config.oper['mode'] < 2:

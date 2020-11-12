@@ -33,3 +33,5 @@ oper:
   max_temp: 60
   time_check_temp: 60
   overheated_sleep: 5
+  display: 0
+
