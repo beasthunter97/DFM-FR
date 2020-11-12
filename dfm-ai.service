@@ -8,7 +8,7 @@ Type=simple
 User=mendel
 Environment=DISPLAY=:0
 WorkingDirectory=/home/mendel/coral/DFM_FR/
-ExecStart=/bin/bash /home/mendel/coral/DFM_FR/test_script.sh
+ExecStart=/bin/bash /home/mendel/coral/DFM_FR/boot_script.sh
 Restart=on-failure
 RestartSec=2
 
