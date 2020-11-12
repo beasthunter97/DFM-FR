@@ -109,6 +109,9 @@ def main(img_queue, temper):
                     'name': '',
                     'capture': image_encode(face)
                 })
+    print('testing')
+    time.sleep(10)
+    print('testing')
 
 
 if __name__ == "__main__":
