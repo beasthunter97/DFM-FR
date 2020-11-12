@@ -2,7 +2,7 @@ import argparse
 import time
 from ctypes import c_uint8
 from multiprocessing import Process, Queue, Value
-time.sleep(10)
+
 import cv2
 from imutils.video import FileVideoStream, WebcamVideoStream
 
