@@ -1,7 +1,7 @@
 path:
   detect_model: models/ssd_mobilenet_v2_face_quant_postprocess_edgetpu.tflite
-  recog_model:
-  labels:
+  recog_model: models/mobilenet_recog_quantized_edgetpu.tflite
+  labels: models/labels.txt
 
 stream:
   out: rtsp://192.168.200.80:555/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream
@@ -33,5 +33,4 @@ oper:
   max_temp: 60
   time_check_temp: 60
   overheated_sleep: 5
-  display: 0
-
+  display: 1

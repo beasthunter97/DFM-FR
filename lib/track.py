@@ -50,7 +50,7 @@ class Tracker:
             for new in range(len(self.new_obj)):
                 self.update_obj(new=new)
         elif self.new_obj == []:
-            for old in range(len(self.obj)):
+            for old in range(len(self.obj)-1, -1, -1):
                 self.update_obj(old=old)
         else:
             pos = [i['pos'] for i in self.obj]
@@ -68,7 +68,7 @@ class Tracker:
                 dist[:, min_new] = 2000
             for new, old in zip(new_, old_):
                 self.update_obj(new=new, old=old)
-            for old in range(dist.shape[0]):
+            for old in range(dist.shape[0]-1, -1, -1):
                 if old not in old_:
                     self.update_obj(old=old)
             for new in range(dist.shape[1]):
