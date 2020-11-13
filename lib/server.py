@@ -82,7 +82,7 @@ class Server:
             elif respond.status_code == 429:
                 server_status = 'Too many requests'
             else:
-                server_status = 'Error ' + respond.status_code
+                server_status = 'Error ' + str(respond.status_code)
         except ConnectionError:
             server_status = 'No internet connection'
         total = time.time() - start_time
