@@ -85,7 +85,7 @@ def main(img_queue, temper):
                     temp(data, img_queue)
                 else:
                     img_queue.put(data)
-            if config.oper['dislay']:
+            if config.oper['display']:
                 draw(frame, boxes, names)
                 cv2.imshow('frame', cv2.resize(frame, (720, 540)))
                 key = cv2.waitKey(1) & 0xFF
