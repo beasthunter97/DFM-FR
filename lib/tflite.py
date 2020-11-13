@@ -109,7 +109,7 @@ class Recognizer:
                 inp = cv2.resize(image, (96, 96))
                 set_input(self.model, inp)
                 self.model.invoke()
-                names.append(self.labels[output_tensor(self.model, 0).argmax()])
+                names.append({self.labels[output_tensor(self.model, 0).argmax()]: 1})
         else:
             names = [{'TEMP': 1}] * len(images)
         return names
