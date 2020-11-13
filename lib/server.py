@@ -48,7 +48,7 @@ class Server:
                     else:
                         self.device_status = 'Normal (%d)' % self.temp
                 else:
-                    self.device_status = 'Error ' + requests.status_codes
+                    self.device_status = 'Error ' + str(requests.status_codes)
             except ConnectionError:
                 self.device_status = 'No internet connection'
             self.temp_time = time.time()
