@@ -41,14 +41,14 @@ class Server:
                 "status": 1
             }
             try:
-                respond = requests.post(self.url_status, data=data, verify=False)
-                if requests.status_codes == 200:
+                response = requests.post(self.url_status, data=data, verify=False)
+                if response.status_code == 200:
                     if self.temp > self.max_temp:
                         self.device_status = 'Overheated (%d)' % self.temp
                     else:
                         self.device_status = 'Normal (%d)' % self.temp
                 else:
-                    self.device_status = 'Error ' + str(respond.status_codes)
+                    self.device_status = 'Error ' + str(response.status_code)
             except ConnectionError:
                 self.device_status = 'No internet connection'
             self.temp_time = time.time()
@@ -76,13 +76,13 @@ class Server:
     def server_send(self):
         start_time = time.time()
         try:
-            respond = requests.post(self.url_capture, json=self.data, verify=False)
-            if respond.status_code == 200:
+            response = requests.post(self.url_capture, json=self.data, verify=False)
+            if response.status_code == 200:
                 server_status = 'Success'
-            elif respond.status_code == 429:
+            elif response.status_code == 429:
                 server_status = 'Too many requests'
             else:
-                server_status = 'Error ' + str(respond.status_code)
+                server_status = 'Error ' + str(response.status_code)
         except ConnectionError:
             server_status = 'No internet connection'
         total = time.time() - start_time
