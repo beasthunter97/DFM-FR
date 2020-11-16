@@ -106,7 +106,7 @@ class Tracker:
         obj = self.obj.pop(old)
         self.datas.append({
             'timestamp': int(time.time()),
-            'cam_no': obj['dir'],
+            'camera': obj['dir'],
             'name': obj['name'],
             'capture': image_encode(obj['face'])
         })
