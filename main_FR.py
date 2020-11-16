@@ -103,12 +103,16 @@ def main(img_queue, temper):
                 continue
             counter = 0
             for face in faces:
-                img_queue.put({
+                data = {
                     'timestamp': int(time.time()),
                     'camera': args['direction'],
                     'name': '',
                     'capture': image_encode(face)
-                })
+                }
+                if img_queue.qsize() >= 126:
+                    temp(data, img_queue)
+                else:
+                    img_queue.put(data)
 
 
 if __name__ == "__main__":
