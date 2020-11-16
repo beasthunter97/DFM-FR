@@ -4,6 +4,8 @@ source /home/mendel/.bashrc
 
 cd /home/mendel/coral/DFM_FR/
 
+sudo mount -t ntfs-3g /dev/mmcblk1p1 ./temp
+
 # if ping -c 2 192.168.20.78 &> /dev/null
 # then
 #   c_cam1=true
