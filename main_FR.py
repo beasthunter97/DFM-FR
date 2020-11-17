@@ -51,7 +51,10 @@ def init_constant():
 def main(img_queue, temper):
     init_constant()
     counter = 0
+    file = open('time_log.txt', 'a')
+    file.write(time.strftime('# %m.%d\n'))
     while True:
+        fps_time = time.time()
         # -------------------------CHECK TEMPERATURE------------------------- #
         if temper.value > config.oper['max_temp']:
             print('Overheated, sleep for 5 seconds')
@@ -86,6 +89,7 @@ def main(img_queue, temper):
                     temp(data, img_queue)
                 else:
                     img_queue.put(data)
+                    file.write(time.strftime('%H:%M\n'))
             if config.oper['display']:
                 draw(frame, boxes, names)
                 cv2.imshow('frame', cv2.resize(frame, (720, 540)))
@@ -111,9 +115,13 @@ def main(img_queue, temper):
                     'capture': image_encode(face)
                 }
                 if img_queue.qsize() >= 126:
-                    temp(data, img_queue)
+                    temp(data)
                 else:
                     img_queue.put(data)
+        total_time = time.time() - fps_time()
+        if 1./total_time < 15:
+            print('time: ', total_time)
+    file.close()
 
 
 if __name__ == "__main__":
