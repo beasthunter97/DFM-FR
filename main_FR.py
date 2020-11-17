@@ -83,7 +83,7 @@ def main(img_queue, temper):
                 ])
             for data in datas:
                 if img_queue.qsize() >= 126:
-                    temp(data, img_queue)
+                    temp(data)
                 else:
                     img_queue.put(data)
             if config.oper['display']:

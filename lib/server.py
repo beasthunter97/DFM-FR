@@ -105,6 +105,7 @@ class Server:
 
 
 def temp(data: any):
+    global config, img_queue
     if isinstance(data, list):
         file_name = random_name(16)
         with open(file_name, 'w') as file:
