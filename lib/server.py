@@ -38,14 +38,7 @@ class Server:
     """
     def __init__(self, url_capture: str, url_status: str,
                  max_temp: int, time_check_temp: int):
-        """Initialize
-
-        Args:
-            url_capture (str): URL to capture server
-            url_status (str): URL to status server
-            max_temp (int): Max device's temperature
-            time_check_temp (int): Time cycle to check temperature
-        """
+        global config
         self.temp = 0
         self.url_capture = url_capture
         self.url_status = url_status
