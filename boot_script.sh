@@ -31,3 +31,4 @@ git pull > update_log.txt &
 
 python3 main_FR.py -s vid -v test1.m4v -d out > python_log.txt
 
+sudo umount /dev/mmcblk1p1
