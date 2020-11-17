@@ -52,7 +52,7 @@ def main(img_queue, temper):
     init_constant()
     counter = 0
     file = open('time_log.txt', 'a')
-    file.write(time.strftime('# %m.%d\n'))
+    file.write(time.strftime('# %d.%m\n'))
     while True:
         fps_time = time.time()
         # -------------------------CHECK TEMPERATURE------------------------- #
@@ -118,7 +118,7 @@ def main(img_queue, temper):
                     temp(data)
                 else:
                     img_queue.put(data)
-        total_time = time.time() - fps_time()
+        total_time = time.time() - fps_time
         if 1./total_time < 15:
             print('time: ', total_time)
     file.close()
