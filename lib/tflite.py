@@ -60,11 +60,15 @@ def fix_box(x1, y1, x2, y2):
 
 
 class Detector:
-    def __init__(self, model_path, min_face_size=0, threshold=0.3):
+    def __init__(self, model_path, min_face_size=0, threshold=0.3, face_size=112):
         self.model = make_interpreter(model_path)
         self.model.allocate_tensors()
         self.min_face_size = min_face_size
         self.threshold = threshold
+        if isinstance(face_size, int):
+            self.face_size = (face_size, face_size)
+        else:
+            self.face_size = face_size
 
     def detect(self, images, return_faces=False):
         h, w = images.shape[:2]
@@ -86,7 +90,8 @@ class Detector:
         if return_faces:
             faces = []
             for x1, y1, x2, y2 in boxes:
-                faces.append(images[y1:y2, x1:x2].copy())
+                face = images[y1:y2, x1:x2].copy()
+                faces.append(cv2.resize(face, self.face_size))
             return boxes, faces
         else:
             return boxes
@@ -106,8 +111,7 @@ class Recognizer:
         if self.model is not None:
             names = []
             for image in images:
-                inp = cv2.resize(image, (96, 96))
-                set_input(self.model, inp)
+                set_input(self.model, image)
                 self.model.invoke()
                 names.append({self.labels[output_tensor(self.model, 0).argmax()]: 1})
         else:

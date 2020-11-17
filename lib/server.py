@@ -8,6 +8,31 @@ from requests import ConnectionError
 from lib.utils import random_name
 
 
+def server_send(img_queue, temper, config, method='post'):
+    global img_queue, config
+    server = Server(config.url['capture'], config.url['status'],
+                    config.oper['max_temp'], config.oper['time_check_temp'])
+    while True:
+        server.check_device_status()
+        if server.device_status is not None:
+            temper.value = server.temp
+            print('[DEVICE] Status: %s' % server.device_status)
+
+        command = server.get_data(img_queue)
+        if command == 'continue':
+            continue
+        elif command == 'break':
+            break
+
+        server.server_send()
+        print('[SERVER] Time cost %6.2f second(s) | Status: %s' % server.server_status)
+        if server.server_status[1] == 'Too many requests':
+            time.sleep(3)
+        if server.server_status[1] != 'Success':
+            temp(server.data)
+            time.sleep(2)
+
+
 class Server:
     """Handling server procedure
     """
@@ -28,6 +53,7 @@ class Server:
         self.max_temp = max_temp
         self.time_check_temp = time_check_temp
         self.temp_time = time.time()
+        self.max_face = config.oper['max_face']
 
     def check_device_status(self):
         if time.time() - self.temp_time > self.time_check_temp:
@@ -64,9 +90,9 @@ class Server:
                 return 'continue'
         else:
             self.data = []
-            if img_queue.qsize() < 10:
+            if img_queue.qsize() < self.max_face:
                 time.sleep(0.5)
-            for _ in range(int(min(img_queue.qsize(), 10))):
+            for _ in range(int(min(img_queue.qsize(), self.max_face))):
                 dat = img_queue.get()
                 if dat == 'stop':
                     self.stop = True
@@ -79,8 +105,6 @@ class Server:
             response = requests.post(self.url_capture, json=self.data, verify=False)
             if response.status_code == 200:
                 server_status = 'Success'
-            elif response.status_code == 429:
-                server_status = 'Too many requests'
             else:
                 server_status = 'Error ' + str(response.status_code)
         except ConnectionError:
@@ -89,38 +113,14 @@ class Server:
         self.server_status = (total, server_status)
 
 
-def server_send(img_queue, temper, config, method='post'):
-    server = Server(config.url['capture'], config.url['status'],
-                    config.oper['max_temp'], config.oper['time_check_temp'])
-    while True:
-        server.check_device_status()
-        if server.device_status is not None:
-            temper.value = server.temp
-            print('[DEVICE] Status: %s' % server.device_status)
-
-        command = server.get_data(img_queue)
-        if command == 'continue':
-            continue
-        elif command == 'break':
-            break
-
-        server.server_send()
-        print('[SERVER] Time cost %6.2f second(s) | Status: %s' % server.server_status)
-        if server.server_status[1] == 'Too many requests':
-            time.sleep(3)
-        if server.server_status[1] != 'Success':
-            temp(server.data)
-            time.sleep(2)
-
-
-def temp(data: any, img_queue=None):
+def temp(data: any):
     if isinstance(data, list):
         file_name = random_name(16)
         with open(file_name, 'w') as file:
             file.write(str(data))
     else:
         data = [data]
-        for _ in range(9):
+        for _ in range(config.oper['max_face']):
             data.append(img_queue.get())
         temp(data)
 
