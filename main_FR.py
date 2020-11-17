@@ -70,7 +70,7 @@ def main(img_queue, temper):
         # ------------------------------------------------------------------- #
         # -------------------------------MAIN-1------------------------------ #
         boxes, faces = detector.detect(frame, True)
-        size = len(faces)
+        size_ = len(faces)
         if config.oper['mode']:
             preds = recognizer.recognize(faces)
             objs, datas = tracker.track(boxes, preds, faces)
@@ -121,7 +121,7 @@ def main(img_queue, temper):
                     img_queue.put(data)
         total_time = time.time() - fps_time
         if 1./total_time < 15:
-            print('time: %.2f %d', (total_time, size))
+            print('time: %.2f %d' % (total_time, size_))
     file.close()
 
 
