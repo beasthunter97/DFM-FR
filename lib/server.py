@@ -135,9 +135,9 @@ def load_temp():
             with open(file_name, 'r') as file:
                 data = file.read()
                 retval = eval(data)
+            os.remove(file_name)
+            break
         except: # noqa
             os.remove(file_name)
             continue
-        os.remove(file_name)
-        break
     return retval
