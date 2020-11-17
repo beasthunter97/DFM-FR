@@ -131,9 +131,13 @@ def load_temp():
         if files == []:
             break
         file_name = '/'.join((root, files[0]))
-        with open(file_name, 'r') as file:
-            data = file.read()
-            retval = eval(data)
-        os.remove(file_name)
-        break
+        try:
+            with open(file_name, 'r') as file:
+                data = file.read()
+                retval = eval(data)
+            os.remove(file_name)
+            break
+        except: # noqa
+            os.remove(file_name)
+            continue
     return retval
