@@ -101,6 +101,9 @@ def main(img_queue, temper):
                     break
         # ------------------------------------------------------------------- #
         # -------------------------------MAIN-2------------------------------ #
+        total_time = time.time() - fps_time
+        if 1./total_time < 15:
+            print('time: %.2f %d' % (total_time, size_))
         if config.oper['mode'] < 2:
             # --------------------------------------------------------------- #
             # -----------------------FRAME SKIP COUNTER---------------------- #
@@ -119,9 +122,6 @@ def main(img_queue, temper):
                     temp(data)
                 else:
                     img_queue.put(data)
-        total_time = time.time() - fps_time
-        if 1./total_time < 15:
-            print('time: %.2f %d' % (total_time, size_))
     file.close()
 
 
