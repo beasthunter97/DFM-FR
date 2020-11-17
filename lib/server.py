@@ -7,6 +7,7 @@ from requests import ConnectionError
 
 from lib.utils import random_name
 
+
 class Server:
     """Handling server procedure
     """
@@ -76,9 +77,6 @@ class Server:
         start_time = time.time()
         try:
             response = requests.post(self.url_capture, json=self.data, verify=False)
-            with open('test.test', 'w') as file:
-                file.write(str(time.time() - start_time))
-                file.write(' %d\n' % response.status_code)
             if response.status_code == 200:
                 server_status = 'Success'
             elif response.status_code == 429:
