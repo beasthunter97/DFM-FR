@@ -39,7 +39,8 @@ def init_constant():
 
     detector = Detector(config.path['detect_model'],
                         config.model_setting['min_face_HD'],
-                        config.model_setting['threshold'])
+                        config.model_setting['threshold'],
+                        config.model_setting['face_size'])
     recognizer = Recognizer(config.path['recog_model'],
                             config.path['labels'])
     tracker = Tracker(dir_, config.tracker['min_dist'][dir_],
