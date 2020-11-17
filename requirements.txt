@@ -1,0 +1,7 @@
+numpy
+pandas
+pyyaml
+requests
+scipy
+imutils
+opencv_python
