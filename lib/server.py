@@ -105,7 +105,7 @@ def server_send(img_queue, temper, config, method='post'):
             break
 
         server.server_send()
-        print('[SERVER] Time cost %.2f second(s) | Status: %s' % server.server_status)
+        print('[SERVER] Time cost %6.2f second(s) | Status: %s' % server.server_status)
         if server.server_status[1] == 'Too many requests':
             time.sleep(3)
         if server.server_status[1] != 'Success':
