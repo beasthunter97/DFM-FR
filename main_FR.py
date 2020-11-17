@@ -111,7 +111,7 @@ def main(img_queue, temper):
                     'capture': image_encode(face)
                 }
                 if img_queue.qsize() >= 126:
-                    temp(data, img_queue)
+                    temp(data)
                 else:
                     img_queue.put(data)
 
