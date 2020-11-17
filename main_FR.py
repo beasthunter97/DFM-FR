@@ -54,6 +54,7 @@ def main(img_queue, temper):
     file = open('time_log.txt', 'a')
     file.write(time.strftime('# %m.%d\n'))
     while True:
+        fps_time = time.time()
         # -------------------------CHECK TEMPERATURE------------------------- #
         if temper.value > config.oper['max_temp']:
             print('Overheated, sleep for 5 seconds')
@@ -117,6 +118,9 @@ def main(img_queue, temper):
                     temp(data)
                 else:
                     img_queue.put(data)
+        total_time = time.time() - fps_time()
+        if 1./total_time < 15:
+            print('time: ', total_time)
     file.close()
 
 
