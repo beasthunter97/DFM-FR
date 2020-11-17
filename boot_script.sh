@@ -27,10 +27,10 @@ sudo mount -t ntfs-3g /dev/mmcblk1p1 ./temp
 #   status=0
 # fi
 
-git pull > update_log.txt &
+git pull > log/update_log.txt &
 
 sleep 3s
 
-python3 main_FR.py -s vid -v test1.m4v -d out > python_log.txt
+python3 main_FR.py -s vid -v test1.m4v -d out > log/python_log.txt
 
 sudo umount /dev/mmcblk1p1
