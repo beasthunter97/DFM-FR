@@ -42,13 +42,13 @@ class Server:
             }
             try:
                 response = requests.post(self.url_status, data=data, verify=False)
-                if requests.status_code == 200:
+                if response.status_code == 200:
                     if self.temp > self.max_temp:
                         self.device_status = 'Overheated (%d)' % self.temp
                     else:
                         self.device_status = 'Normal (%d)' % self.temp
                 else:
-                    self.device_status = 'Error ' + str(response.status_codes)
+                    self.device_status = 'Error ' + str(response.status_code)
             except ConnectionError:
                 self.device_status = 'No internet connection'
             self.temp_time = time.time()
