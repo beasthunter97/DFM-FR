@@ -9,7 +9,8 @@ from lib.utils import random_name
 
 
 def server_send(img_queue, temper, config, method='post'):
-    server = Server(config.url['capture'], config.url['status'],
+    global img_queue, config
+    server = Server(config.url['capture'], config.url['status'], config.oper['max_face'],
                     config.oper['max_temp'], config.oper['time_check_temp'])
     while True:
         server.check_device_status()
@@ -35,9 +36,8 @@ def server_send(img_queue, temper, config, method='post'):
 class Server:
     """Handling server procedure
     """
-    def __init__(self, url_capture: str, url_status: str,
+    def __init__(self, url_capture: str, url_status: str, max_face: int,
                  max_temp: int, time_check_temp: int):
-        global config
         self.temp = 0
         self.url_capture = url_capture
         self.url_status = url_status
@@ -45,7 +45,7 @@ class Server:
         self.max_temp = max_temp
         self.time_check_temp = time_check_temp
         self.temp_time = time.time()
-        self.max_face = config.oper['max_face']
+        self.max_face = max_face
 
     def check_device_status(self):
         if time.time() - self.temp_time > self.time_check_temp:
@@ -106,7 +106,6 @@ class Server:
 
 
 def temp(data: any):
-    global config, img_queue
     if isinstance(data, list):
         file_name = random_name(16)
         with open(file_name, 'w') as file:
