@@ -9,7 +9,6 @@ from lib.utils import random_name
 
 
 def server_send(img_queue, temper, config, method='post'):
-    global img_queue, config
     server = Server(config.url['capture'], config.url['status'],
                     config.oper['max_temp'], config.oper['time_check_temp'])
     while True:
@@ -114,6 +113,7 @@ class Server:
 
 
 def temp(data: any):
+    global config, img_queue
     if isinstance(data, list):
         file_name = random_name(16)
         with open(file_name, 'w') as file:
