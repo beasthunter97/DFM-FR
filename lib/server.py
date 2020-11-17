@@ -9,7 +9,6 @@ from lib.utils import random_name
 
 
 def server_send(img_queue, temper, config, method='post'):
-    global img_queue, config
     server = Server(config.url['capture'], config.url['status'], config.oper['max_face'],
                     config.oper['max_temp'], config.oper['time_check_temp'])
     while True:
