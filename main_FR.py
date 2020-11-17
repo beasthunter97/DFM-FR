@@ -51,6 +51,8 @@ def init_constant():
 def main(img_queue, temper):
     init_constant()
     counter = 0
+    file = open('log/time_log.txt', 'a')
+    file.write(time.strftime('# %d.%m\n'))
     while True:
         # -------------------------CHECK TEMPERATURE------------------------- #
         if temper.value > config.oper['max_temp']:
@@ -86,6 +88,7 @@ def main(img_queue, temper):
                     temp(data, img_queue)
                 else:
                     img_queue.put(data)
+                    file.write(time.strftime('%H:%M\n'))
             if config.oper['display']:
                 draw(frame, boxes, names)
                 cv2.imshow('frame', cv2.resize(frame, (720, 540)))
@@ -114,6 +117,7 @@ def main(img_queue, temper):
                     temp(data)
                 else:
                     img_queue.put(data)
+    file.close()
 
 
 if __name__ == "__main__":
