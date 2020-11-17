@@ -7,6 +7,7 @@ from requests import ConnectionError
 
 from lib.utils import random_name
 
+
 class Server:
     """Handling server procedure
     """
@@ -76,9 +77,6 @@ class Server:
         start_time = time.time()
         try:
             response = requests.post(self.url_capture, json=self.data, verify=False)
-            with open('test.test', 'w') as file:
-                file.write(str(time.time() - start_time))
-                file.write(' %d\n' % response.status_code)
             if response.status_code == 200:
                 server_status = 'Success'
             elif response.status_code == 429:
@@ -107,7 +105,7 @@ def server_send(img_queue, temper, config, method='post'):
             break
 
         server.server_send()
-        print('[SERVER] Time cost %.2f second(s) | Status: %s' % server.server_status)
+        print('[SERVER] Time cost %6.2f second(s) | Status: %s' % server.server_status)
         if server.server_status[1] == 'Too many requests':
             time.sleep(3)
         if server.server_status[1] != 'Success':
