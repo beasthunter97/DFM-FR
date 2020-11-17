@@ -69,7 +69,6 @@ def main(img_queue, temper):
         # ------------------------------------------------------------------- #
         # -------------------------------MAIN-1------------------------------ #
         boxes, faces = detector.detect(frame, True)
-        size_ = len(faces)
         if config.oper['mode']:
             preds = recognizer.recognize(faces)
             objs, datas = tracker.track(boxes, preds, faces)
