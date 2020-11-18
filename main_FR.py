@@ -6,9 +6,9 @@ from multiprocessing import Process, Queue, Value
 import cv2
 from imutils.video import FileVideoStream, WebcamVideoStream
 
-from lib.server import server_send, temp
+from lib.server import server_send, save
 from lib.tflite import Detector, Recognizer
-from lib.track import Tracker, image_encode
+from lib.track import Tracker, image_encode # noqa
 from lib.utils import ConfigHandler, draw
 
 
@@ -68,6 +68,11 @@ def main(img_queue, temper):
             break
         # ------------------------------------------------------------------- #
         # -------------------------------MAIN-1------------------------------ #
+        if counter < 10:
+            counter += 1
+        elif counter == 10:
+            with open('log/working', 'w') as f:
+                f.write('true')
         boxes, faces = detector.detect(frame, True)
         if config.oper['mode']:
             preds = recognizer.recognize(faces)
@@ -85,7 +90,7 @@ def main(img_queue, temper):
                 ])
             for data in datas:
                 if img_queue.qsize() >= 126:
-                    temp(data, img_queue)
+                    save(data, img_queue)
                 else:
                     img_queue.put(data)
                     file.write(time.strftime('%H:%M\n'))
@@ -99,24 +104,24 @@ def main(img_queue, temper):
                     break
         # ------------------------------------------------------------------- #
         # -------------------------------MAIN-2------------------------------ #
-        if config.oper['mode'] < 2:
-            # --------------------------------------------------------------- #
-            # -----------------------FRAME SKIP COUNTER---------------------- #
-            counter += 1
-            if counter % config.oper['frame_per_capture'] != 0:
-                continue
-            counter = 0
-            for face in faces:
-                data = {
-                    'timestamp': int(time.time()),
-                    'camera': args['direction'],
-                    'name': '',
-                    'capture': image_encode(face)
-                }
-                if img_queue.qsize() >= 126:
-                    temp(data)
-                else:
-                    img_queue.put(data)
+        # if config.oper['mode'] < 2:
+        #     # --------------------------------------------------------------- #
+        #     # -----------------------FRAME SKIP COUNTER---------------------- #
+
+        #     if counter % config.oper['frame_per_capture'] != 0:
+        #         continue
+        #     counter = 0
+        #     for face in faces:
+        #         data = {
+        #             'timestamp': int(time.time()),
+        #             'camera': args['direction'],
+        #             'name': '',
+        #             'capture': image_encode(face)
+        #         }
+        #         if img_queue.qsize() >= 126:
+        #             save(data)
+        #         else:
+        #             img_queue.put(data)
     file.close()
 
 
