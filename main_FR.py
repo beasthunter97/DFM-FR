@@ -54,7 +54,6 @@ def main(img_queue, temper):
     file = open('log/time_log.txt', 'a')
     file.write(time.strftime('# %d.%m\n'))
     while True:
-        fps_time = time.time()
         # -------------------------CHECK TEMPERATURE------------------------- #
         if temper.value > config.oper['max_temp']:
             print('Overheated, sleep for 5 seconds')
@@ -70,7 +69,6 @@ def main(img_queue, temper):
         # ------------------------------------------------------------------- #
         # -------------------------------MAIN-1------------------------------ #
         boxes, faces = detector.detect(frame, True)
-        size_ = len(faces)
         if config.oper['mode']:
             preds = recognizer.recognize(faces)
             objs, datas = tracker.track(boxes, preds, faces)
@@ -119,9 +117,6 @@ def main(img_queue, temper):
                     temp(data)
                 else:
                     img_queue.put(data)
-        total_time = time.time() - fps_time
-        if 1./total_time < 15:
-            print('time: %.2f %d' % (total_time, size_))
     file.close()
 
 
