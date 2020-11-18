@@ -14,6 +14,8 @@ git pull > log/update_log.txt && git add . && git commit -m "Upload log" && git 
     if ! $working
     then
         sudo reboot
+    else
+        echo RUNNING
     fi
 ) &
 

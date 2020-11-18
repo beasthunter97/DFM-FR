@@ -122,14 +122,16 @@ def load():
     for root, dirs, files in os.walk('temp/'):
         if files == []:
             break
-        file_name = '/'.join((root, files[0]))
-        try:
-            with open(file_name, 'r') as file:
-                data = file.read()
-                retval = eval(data)
-            os.remove(file_name)
-            break
-        except: # noqa
-            os.remove(file_name)
-            continue
+        for file in files:
+            file = '/'.join((root, file))
+            try:
+                with open(file, 'r') as f:
+                    data = f.read()
+                    retval = eval(data)
+                os.remove(file)
+                break
+            except: # noqa
+                os.remove(file)
+                continue
+        break
     return retval
