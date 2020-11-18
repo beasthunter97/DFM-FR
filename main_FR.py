@@ -6,9 +6,9 @@ from multiprocessing import Process, Queue, Value
 import cv2
 from imutils.video import FileVideoStream, WebcamVideoStream
 
-from lib.server import server_send, save
+from lib.server import save, server_send, temp_check
 from lib.tflite import Detector, Recognizer
-from lib.track import Tracker, image_encode # noqa
+from lib.track import Tracker, image_encode  # noqa
 from lib.utils import ConfigHandler, draw
 
 
@@ -48,17 +48,17 @@ def init_constant():
                       config.tracker['max_disappear'][dir_])
 
 
-def main(img_queue, temper):
+def main(img_queue, temp):
     init_constant()
     counter = 0
     file = open('log/time_log.txt', 'a')
     file.write(time.strftime('# %d.%m\n'))
     while True:
         # -------------------------CHECK TEMPERATURE------------------------- #
-        if temper.value > config.oper['max_temp']:
+        if temp.value > config.oper['max_temp']:
             print('Overheated, sleep for 5 seconds')
             time.sleep(config.oper['overheated_sleep'])
-            temper.value = 0
+            temp.value = 0
         # ------------------------------------------------------------------- #
         # -------------------------READ & CHECK FRAME------------------------ #
         frame = stream.read()
@@ -129,13 +129,17 @@ if __name__ == "__main__":
     config = ConfigHandler().read()
     args = parse_arg()
     img_queue = Queue(maxsize=128)
-    temper = Value(c_int)
-    temper.value = 0
+    temp = Value(c_int)
+    temp.value = 0
     main_process = Process(target=main,
-                           args=(img_queue, temper,), name='Main')
+                           args=(img_queue, temp,), name='Main')
     server_process = Process(target=server_send,
-                             args=(img_queue, temper, config,), name='Server')
+                             args=(img_queue, config,), name='Server')
+    temp_process = Process(target=temp_check,
+                           args=(temp, config), name='Temp')
+    temp_process.start()
     server_process.start()
     main_process.start()
     main_process.join()
     server_process.join()
+    temp_process.join()
