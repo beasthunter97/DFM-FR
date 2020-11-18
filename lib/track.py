@@ -18,6 +18,11 @@ class Tracker:
         self.min_appear = min_appear
         self.max_disappear = max_disappear
         self.obj = []
+        try:
+            with open('log/unknown', 'r') as file:
+                self.i = int(file.read())
+        except FileNotFoundError:
+            self.i = 0
 
     def track(self, boxes, preds, faces):
         self.new_obj = []
@@ -37,7 +42,7 @@ class Tracker:
             x1, y1, x2, y2 = boxes[i]
             pos = [(x2 + x1)//2, (y2 + y1)//2]
             self.new_obj.append({
-                'face': faces[i],
+                'faces': [faces[i]],
                 'pos': pos,
                 'id': np.random.randint(100),
                 'name': self.get_true_names(preds[i]),
@@ -82,6 +87,8 @@ class Tracker:
                     self.new_obj[new]['pred'][name] += self.obj[old]['pred'][name]
                 else:
                     self.new_obj[new]['pred'][name] = self.obj[old]['pred'][name]
+            self.new_obj[new]['faces'] = self.obj[old]['faces'].\
+                append(self.new_obj[new]['faces'][0])
             self.new_obj[new]['id'] = self.obj[old]['id']
             self.new_obj[new]['name'] = self.get_true_names(self.new_obj[new]['pred'])
             self.obj[old].update(self.new_obj[new])
@@ -104,13 +111,24 @@ class Tracker:
 
     def export_obj(self, old):
         obj = self.obj.pop(old)
-        self.datas.append({
-            'timestamp': int(time.time()),
-            'camera': obj['dir'],
-            'name': obj['name'],
-            'capture': image_encode(obj['face'])
-        })
+        if 'UNKOWN' == obj['name']:
+            for i in range(len(obj['faces'])):
+                with(open('log/unknown', 'w')) as file:
+                    file.write(str(self.i))
+                self.i += 1
+                self.datas.append({
+                    'timestamp': int(time.time()),
+                    'camera': obj['dir'],
+                    'name': '%s-%d' % (obj['name'], self.i),
+                    'capture': image_encode(obj['faces'][i])
+                })
+        else:
+            self.datas.append({
+                'timestamp': int(time.time()),
+                'camera': obj['dir'],
+                'name': obj['name'],
+                'capture': image_encode(obj['faces'][-3])
+            })
 
-    @staticmethod
-    def get_true_names(preds):
+    def get_true_names(self, preds):
         return preds
