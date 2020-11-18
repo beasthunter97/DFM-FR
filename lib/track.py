@@ -87,8 +87,7 @@ class Tracker:
                     self.new_obj[new]['pred'][name] += self.obj[old]['pred'][name]
                 else:
                     self.new_obj[new]['pred'][name] = self.obj[old]['pred'][name]
-            self.new_obj[new]['faces'] = self.obj[old]['faces'].\
-                append(self.new_obj[new]['faces'][0])
+            self.new_obj[new]['faces'].extend(self.obj[old]['faces'])
             self.new_obj[new]['id'] = self.obj[old]['id']
             self.new_obj[new]['name'] = self.get_true_names(self.new_obj[new]['pred'])
             self.obj[old].update(self.new_obj[new])
