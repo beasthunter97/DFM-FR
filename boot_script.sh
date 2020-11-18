@@ -27,7 +27,9 @@ sudo mount -t ntfs-3g /dev/mmcblk1p1 ./temp
 #   status=0
 # fi
 
-git pull > log/update_log.txt &
+git pull > log/update_log.txt
+
+git add . && git commit -m "Upload log" && git push &
 
 sleep 3s
 
