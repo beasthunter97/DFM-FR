@@ -2,6 +2,9 @@
 .vscode/
 temp*
 test*
+*python_log.txt
+*update_log.txt
+log/unknown
 
 # Byte-compiled / optimized / DLL files
 *__pycache__/
