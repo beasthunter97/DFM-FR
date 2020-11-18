@@ -28,7 +28,7 @@ def server_send(img_queue, temper, config, method='post'):
         if server.server_status[1] == 'Too many requests':
             time.sleep(3)
         if server.server_status[1] != 'Success':
-            temp(server.data)
+            save(server.data)
             time.sleep(2)
 
 
@@ -74,7 +74,7 @@ class Server:
 
     def get_data(self, img_queue):
         if img_queue.empty():
-            self.data = load_temp()
+            self.data = load()
             if self.data is None:
                 if self.stop:
                     return 'break'
@@ -104,7 +104,7 @@ class Server:
         self.server_status = (total, server_status)
 
 
-def temp(data: any):
+def save(data: any):
     global config, img_queue
     if isinstance(data, list):
         file_name = random_name(16)
@@ -114,10 +114,10 @@ def temp(data: any):
         data = [data]
         for _ in range(config.oper['max_face']):
             data.append(img_queue.get())
-        temp(data)
+        save(data)
 
 
-def load_temp():
+def load():
     retval = None
     for root, dirs, files in os.walk('temp/'):
         if files == []:
