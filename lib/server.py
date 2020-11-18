@@ -49,10 +49,11 @@ def temp_check(temp, config):
     while True:
         if not temp.value:
             break
+        os.system('echo %d' % temp.value)
         time.sleep(config.oper['time_check_temp'])
         out = subprocess.Popen(['cat', '/sys/class/thermal/thermal_zone0/temp'],
                                stdout=subprocess.PIPE).communicate()[0]
-        os.system('echo RUNNING')
+
         temp.value = int(out.decode("utf-8").split('000')[0])
         data = {
             "temperature": temp.value,
