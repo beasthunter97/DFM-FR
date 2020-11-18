@@ -1,7 +1,7 @@
 import os
 import subprocess
 import time
-
+import os
 import requests
 from requests import ConnectionError
 
@@ -52,7 +52,7 @@ def temp_check(temp, config):
         time.sleep(config.oper['time_check_temp'])
         out = subprocess.Popen(['cat', '/sys/class/thermal/thermal_zone0/temp'],
                                stdout=subprocess.PIPE).communicate()[0]
-
+        os.system('echo RUNNING')
         temp.value = int(out.decode("utf-8").split('000')[0])
         data = {
             "temperature": temp.value,
