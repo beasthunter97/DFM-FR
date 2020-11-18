@@ -1,6 +1,8 @@
-*__pycache__*
-temp*
-*test*
+# User
 .vscode/
-*python_log.txt
-*update_log.txt
+temp*
+test*
+log/*
+!log/time_log.txt
+*__pycache__/
+.ipynb_checkpoints
