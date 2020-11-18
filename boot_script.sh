@@ -1,10 +1,26 @@
 #!/bin/bash
 
 source /home/mendel/.bashrc
-
 cd /home/mendel/coral/DFM_FR/
+mkdir -p temp/ log/
+sudo mount -t ntfs-3g /dev/mmcblk1p1 ./temp/
 
-sudo mount -t ntfs-3g /dev/mmcblk1p1 ./temp
+git pull > log/update_log.txt && git add . && git commit -m "Upload log" && git push &
+
+(
+    echo "false" > log/working
+    sleep 30s
+    working=$(cat log/working)
+    if ! $working
+    then
+        sudo reboot
+    fi
+) &
+
+sleep 3s
+python3 main_FR.py -s vid -v test1.m4v -d out > log/python_log.txt
+
+sudo umount /dev/mmcblk1p1
 
 # if ping -c 2 192.168.20.78 &> /dev/null
 # then
@@ -26,13 +42,3 @@ sudo mount -t ntfs-3g /dev/mmcblk1p1 ./temp
 # else
 #   status=0
 # fi
-
-git pull > log/update_log.txt
-
-git add . && git commit -m "Upload log" && git push &
-
-sleep 3s
-
-python3 main_FR.py -s vid -v test1.m4v -d out > log/python_log.txt
-
-sudo umount /dev/mmcblk1p1
