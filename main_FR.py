@@ -1,6 +1,6 @@
 import argparse
 import time
-from ctypes import c_int
+from ctypes import c_uint8
 from multiprocessing import Process, Queue, Value
 
 import cv2
@@ -53,18 +53,23 @@ def main(img_queue, temp):
     counter = 0
     file = open('log/time_log.txt', 'a')
     file.write(time.strftime('# %d.%m\n'))
+
+    def stop():
+        temp.value = 0
+        stream.stop()
+        img_queue.put('stop')
+
     while True:
         # -------------------------CHECK TEMPERATURE------------------------- #
         if temp.value > config.oper['max_temp']:
             print('Overheated, sleep for 5 seconds')
             time.sleep(config.oper['overheated_sleep'])
-            temp.value = 0
+            temp.value = 1
         # ------------------------------------------------------------------- #
         # -------------------------READ & CHECK FRAME------------------------ #
         frame = stream.read()
         if frame is None:
-            stream.stop()
-            img_queue.put('stop')
+            stop()
             break
         # ------------------------------------------------------------------- #
         # -------------------------------MAIN-1------------------------------ #
@@ -99,8 +104,7 @@ def main(img_queue, temp):
                 cv2.imshow('frame', cv2.resize(frame, (720, 540)))
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord('q'):
-                    stream.stop()
-                    img_queue.put('stop')
+                    stop()
                     break
         # ------------------------------------------------------------------- #
         # -------------------------------MAIN-2------------------------------ #
@@ -129,8 +133,8 @@ if __name__ == "__main__":
     config = ConfigHandler().read()
     args = parse_arg()
     img_queue = Queue(maxsize=128)
-    temp = Value(c_int)
-    temp.value = 0
+    temp = Value(c_uint8)
+    temp.value = 1
     main_process = Process(target=main,
                            args=(img_queue, temp,), name='Main')
     server_process = Process(target=server_send,
