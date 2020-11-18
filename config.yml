@@ -35,4 +35,4 @@ oper:
   time_check_temp: 60
   overheated_sleep: 5
   display: 1
-  max_face: 10
+  max_item: 10
