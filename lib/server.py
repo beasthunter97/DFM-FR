@@ -47,9 +47,9 @@ def server_send(img_queue, config):
 
 def temp_check(temp, config):
     while True:
+        time.sleep(config.oper['time_check_temp'])
         if not temp.value:
             break
-        time.sleep(config.oper['time_check_temp'])
         out = subprocess.Popen(['cat', '/sys/class/thermal/thermal_zone0/temp'],
                                stdout=subprocess.PIPE).communicate()[0]
 
