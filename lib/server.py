@@ -1,6 +1,6 @@
 import os
-from subprocess import Popen, PIPE
 import time
+from subprocess import PIPE, Popen
 
 import requests
 from requests import ConnectionError
