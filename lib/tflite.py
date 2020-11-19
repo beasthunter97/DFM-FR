@@ -115,5 +115,5 @@ class Recognizer:
                 self.model.invoke()
                 names.append({self.labels[output_tensor(self.model, 0).argmax()]: 1})
         else:
-            names = [{'TEMP': 1}] * len(images)
+            names = [{'UNKNOWN': 1}] * len(images)
         return names
