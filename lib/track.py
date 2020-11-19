@@ -21,6 +21,8 @@ class Tracker:
         try:
             with open('log/unknown', 'r') as file:
                 self.i = int(file.read())
+                if self.i >= 1000:
+                    self.i = 0
         except FileNotFoundError:
             self.i = 0
 
