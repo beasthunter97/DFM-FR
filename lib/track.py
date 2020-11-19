@@ -112,7 +112,7 @@ class Tracker:
 
     def export_obj(self, old):
         obj = self.obj.pop(old)
-        if 'UNKOWN' == obj['name']:
+        if 'UNKNOWN' == obj['name']:
             for i in range(len(obj['faces'])):
                 with(open('log/unknown', 'w')) as file:
                     file.write(str(self.i))
