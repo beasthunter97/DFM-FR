@@ -49,16 +49,14 @@ def init_constant():
 
 
 def main(img_queue, temp):
-    init_constant()
-    counter = 0
-    file = open('log/time_log.txt', 'a')
-    file.write(time.strftime('# %d.%m\n'))
-
     def stop():
         temp.value = 0
         stream.stop()
         img_queue.put('stop')
-
+    init_constant()
+    counter = 0
+    file = open('log/time_log.txt', 'a')
+    file.write(time.strftime('# %d.%m\n'))
     while True:
         # -------------------------CHECK TEMPERATURE------------------------- #
         if temp.value > config.oper['max_temp']:
