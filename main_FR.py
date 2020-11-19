@@ -42,7 +42,8 @@ def init_constant():
                         config.model_setting['threshold'],
                         config.model_setting['face_size'])
     recognizer = Recognizer(config.path['recog_model'],
-                            config.path['labels'])
+                            config.path['labels'],
+                            config.oper['mode'])
     tracker = Tracker(dir_, config.tracker['min_dist'][dir_],
                       config.tracker['min_appear'][dir_],
                       config.tracker['max_disappear'][dir_])
@@ -106,26 +107,6 @@ def main(img_queue, temp):
                 if key == ord('q'):
                     stop()
                     break
-        # ------------------------------------------------------------------- #
-        # -------------------------------MAIN-2------------------------------ #
-        # if config.oper['mode'] < 2:
-        #     # --------------------------------------------------------------- #
-        #     # -----------------------FRAME SKIP COUNTER---------------------- #
-
-        #     if counter % config.oper['frame_per_capture'] != 0:
-        #         continue
-        #     counter = 0
-        #     for face in faces:
-        #         data = {
-        #             'timestamp': int(time.time()),
-        #             'camera': args['direction'],
-        #             'name': '',
-        #             'capture': image_encode(face)
-        #         }
-        #         if img_queue.qsize() >= 126:
-        #             save(data)
-        #         else:
-        #             img_queue.put(data)
 
 
 if __name__ == "__main__":
