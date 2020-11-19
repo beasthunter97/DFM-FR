@@ -53,6 +53,8 @@ def main(img_queue, temp):
         temp.value = 0
         stream.stop()
         img_queue.put('stop')
+        file.close()
+
     init_constant()
     counter = 0
     file = open('log/time_log.txt', 'a')
@@ -124,7 +126,6 @@ def main(img_queue, temp):
         #             save(data)
         #         else:
         #             img_queue.put(data)
-    file.close()
 
 
 if __name__ == "__main__":
