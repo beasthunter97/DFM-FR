@@ -13,6 +13,14 @@ sudo mount -t ntfs-3g /dev/mmcblk1p1 ./temp/
     then
         sudo reboot
     else
+        while true
+        do
+            count=`ping -c 1 8.8.8.8 | grep bytes | wc -l`
+            if [ $count -gt 1 ]
+            then
+                break
+            fi
+        done
         git pull > log/update_log.txt
         git add .
         git commit -m "Upload log"
