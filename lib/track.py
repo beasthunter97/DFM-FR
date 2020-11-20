@@ -19,7 +19,7 @@ class Tracker:
         self.min_appear = min_appear
         self.max_disappear = max_disappear
         self.obj = []
-        self.mode = 1
+        self.mode = mode
         try:
             with open('log/unknown', 'r') as file:
                 self.i = int(file.read())
