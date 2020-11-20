@@ -29,7 +29,7 @@ tracker:
     out: 7
 
 oper:
-  mode: 1 # 0: send data only, 1: send data & tracking, 2: tracking only
+  mode: 0 # 0: send data only, 1: send data & tracking, 2: tracking only
   frame_per_capture: 5
   max_temp: 60
   time_check_temp: 60
