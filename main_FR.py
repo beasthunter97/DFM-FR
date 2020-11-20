@@ -8,7 +8,7 @@ from imutils.video import FileVideoStream, WebcamVideoStream
 
 from lib.server import save, server_send, temp_check
 from lib.tflite import Detector, Recognizer
-from lib.track import Tracker, image_encode  # noqa
+from lib.track import Tracker
 from lib.utils import ConfigHandler, draw
 
 
@@ -42,23 +42,25 @@ def init_constant():
                         config.model_setting['threshold'],
                         config.model_setting['face_size'])
     recognizer = Recognizer(config.path['recog_model'],
-                            config.path['labels'])
+                            config.path['labels'],
+                            config.oper['mode'])
     tracker = Tracker(dir_, config.tracker['min_dist'][dir_],
                       config.tracker['min_appear'][dir_],
-                      config.tracker['max_disappear'][dir_])
+                      config.tracker['max_disappear'][dir_],
+                      config.oper['mode'])
 
 
 def main(img_queue, temp):
-    init_constant()
-    counter = 0
-    file = open('log/time_log.txt', 'a')
-    file.write(time.strftime('# %d.%m\n'))
-
     def stop():
         temp.value = 0
         stream.stop()
         img_queue.put('stop')
+        file.close()
 
+    init_constant()
+    counter = 0
+    file = open('log/time_log.txt', 'a')
+    file.write(time.strftime('# %d.%m\n'))
     while True:
         # -------------------------CHECK TEMPERATURE------------------------- #
         if temp.value > config.oper['max_temp']:
@@ -106,27 +108,6 @@ def main(img_queue, temp):
                 if key == ord('q'):
                     stop()
                     break
-        # ------------------------------------------------------------------- #
-        # -------------------------------MAIN-2------------------------------ #
-        # if config.oper['mode'] < 2:
-        #     # --------------------------------------------------------------- #
-        #     # -----------------------FRAME SKIP COUNTER---------------------- #
-
-        #     if counter % config.oper['frame_per_capture'] != 0:
-        #         continue
-        #     counter = 0
-        #     for face in faces:
-        #         data = {
-        #             'timestamp': int(time.time()),
-        #             'camera': args['direction'],
-        #             'name': '',
-        #             'capture': image_encode(face)
-        #         }
-        #         if img_queue.qsize() >= 126:
-        #             save(data)
-        #         else:
-        #             img_queue.put(data)
-    file.close()
 
 
 if __name__ == "__main__":
