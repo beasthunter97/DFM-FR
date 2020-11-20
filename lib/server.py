@@ -35,7 +35,6 @@ def server_send(img_queue, config):
             else:
                 server_status = 'Error ' + str(response.status_code)
         except ConnectionError:
-            fff.write('No internet\n')
             server_status = 'No internet connection'
         server_time = time.time() - server_time
         print('[SERVER] Time cost %6.2f second(s) | Status: %s' %
