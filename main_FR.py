@@ -8,7 +8,7 @@ from imutils.video import FileVideoStream, WebcamVideoStream
 
 from lib.server import save, server_send, temp_check
 from lib.tflite import Detector, Recognizer
-from lib.track import Tracker, image_encode  # noqa
+from lib.track import Tracker
 from lib.utils import ConfigHandler, draw
 
 
@@ -46,7 +46,8 @@ def init_constant():
                             config.oper['mode'])
     tracker = Tracker(dir_, config.tracker['min_dist'][dir_],
                       config.tracker['min_appear'][dir_],
-                      config.tracker['max_disappear'][dir_])
+                      config.tracker['max_disappear'][dir_],
+                      config.oper['mode'])
 
 
 def main(img_queue, temp):
