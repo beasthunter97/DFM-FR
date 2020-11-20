@@ -11,7 +11,7 @@ from lib.tflite import Detector, Recognizer
 from lib.track import Tracker
 from lib.utils import ConfigHandler, draw
 
-
+a = 'test'
 def parse_arg():
     ap = argparse.ArgumentParser()
     ap.add_argument('-s', '--source', default='vid', choices=('cam', 'vid'),
