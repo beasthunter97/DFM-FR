@@ -10,8 +10,10 @@ from lib.utils import random_name
 
 def server_send(img_queue, config):
     stop = False
+    fff = open('tetet', 'a')
     while True:
         if img_queue.empty():
+            fff.write('queue empty\n')
             data = load()
             if data is None:
                 if stop:
@@ -24,17 +26,20 @@ def server_send(img_queue, config):
             for _ in range(int(min(img_queue.qsize(), config.oper['max_item']))):
                 dat = img_queue.get()
                 if dat == 'stop':
+                    fff.write('stop\n')
                     stop = True
                     continue
                 data.append(dat)
         server_time = time.time()
         try:
+            fff.write('data received\n')
             response = requests.post(config.url['capture'], json=data, verify=False)
             if response.status_code == 200:
                 server_status = 'Success'
             else:
                 server_status = 'Error ' + str(response.status_code)
         except ConnectionError:
+            fff.write('No internet\n')
             server_status = 'No internet connection'
         server_time = time.time() - server_time
         print('[SERVER] Time cost %6.2f second(s) | Status: %s' %
