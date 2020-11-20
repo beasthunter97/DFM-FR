@@ -98,8 +98,8 @@ class Detector:
 
 
 class Recognizer:
-    def __init__(self, model_path, labels):
-        if model_path is None:
+    def __init__(self, model_path, labels, mode=1):
+        if model_path is None or not mode:
             self.model = None
         else:
             with open(labels, 'r') as file:
@@ -115,5 +115,5 @@ class Recognizer:
                 self.model.invoke()
                 names.append({self.labels[output_tensor(self.model, 0).argmax()]: 1})
         else:
-            names = [{'TEMP': 1}] * len(images)
+            names = [{'UNKNOWN': 1}] * len(images)
         return names

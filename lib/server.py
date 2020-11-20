@@ -1,6 +1,6 @@
 import os
-import subprocess
 import time
+from subprocess import PIPE, Popen
 
 import requests
 from requests import ConnectionError
@@ -50,8 +50,9 @@ def temp_check(temp, config):
         time.sleep(config.oper['time_check_temp'])
         if not temp.value:
             break
-        out = subprocess.Popen(['cat', '/sys/class/thermal/thermal_zone0/temp'],
-                               stdout=subprocess.PIPE).communicate()[0]
+        else:
+            out = Popen(['cat', '/sys/class/thermal/thermal_zone0/temp'],
+                        stdout=PIPE).communicate()[0]
 
         temp.value = int(out.decode("utf-8").split('000')[0])
         data = {

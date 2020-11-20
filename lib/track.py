@@ -12,15 +12,19 @@ def image_encode(img):
 
 
 class Tracker:
-    def __init__(self, direction='OUT', min_dist=10, min_appear=3, max_disappear=7):
+    def __init__(self, direction='OUT', min_dist=10, min_appear=3,
+                 max_disappear=7, mode=1):
         self.dir = direction
         self.min_dist = min_dist
         self.min_appear = min_appear
         self.max_disappear = max_disappear
         self.obj = []
+        self.mode = 1
         try:
             with open('log/unknown', 'r') as file:
                 self.i = int(file.read())
+                if self.i >= 1000:
+                    self.i = 0
         except FileNotFoundError:
             self.i = 0
 
@@ -110,7 +114,7 @@ class Tracker:
 
     def export_obj(self, old):
         obj = self.obj.pop(old)
-        if 'UNKOWN' == obj['name']:
+        if 'UNKNOWN' == obj['name']:
             for i in range(len(obj['faces'])):
                 with(open('log/unknown', 'w')) as file:
                     file.write(str(self.i))
@@ -128,6 +132,14 @@ class Tracker:
                 'name': obj['name'],
                 'capture': image_encode(obj['faces'][-3])
             })
+            if self.mode == 1:
+                for img in obj['faces'][1:-3]:
+                    self.datas.append({
+                        'timestamp': int(time.time()),
+                        'camera': obj['dir'],
+                        'name': obj['name'],
+                        'capture': image_encode(img)
+                    })
 
     def get_true_names(self, preds):
         return preds
