@@ -16,7 +16,7 @@ def parse_arg():
     ap = argparse.ArgumentParser()
     ap.add_argument('-s', '--source', default='vid', choices=('cam', 'vid'),
                     help='Select input source, "cam" or "vid"')
-    ap.add_argument('-v', '--vid-path', default='test/videos/test2.m4v',
+    ap.add_argument('-v', '--vid-path', default='test/test.m4v',
                     help='Path to video input when source is "vid"')
     ap.add_argument('-d', '--direction', required=True, choices=('in', 'out'),
                     help='Camera tracking direction "in" or "out"')
@@ -36,7 +36,6 @@ def init_constant():
         VS = FileVideoStream
         src = args['vid_path']
     stream = VS(src).start()
-
     detector = Detector(config.path['detect_model'],
                         config.model_setting['min_face_HD'],
                         config.model_setting['threshold'],
@@ -61,7 +60,9 @@ def main(img_queue, temp):
     counter = 0
     file = open('log/time_log.txt', 'a')
     file.write(time.strftime('# %d.%m\n'))
+    ff = 0
     while True:
+
         # -------------------------CHECK TEMPERATURE------------------------- #
         if temp.value > config.oper['max_temp']:
             print('Overheated, sleep for 5 seconds')
@@ -73,6 +74,9 @@ def main(img_queue, temp):
         if frame is None:
             stop()
             break
+        if ff <= 700:
+            ff += 1
+            continue
         # ------------------------------------------------------------------- #
         # -------------------------------MAIN-1------------------------------ #
         if counter < 10:
@@ -83,7 +87,7 @@ def main(img_queue, temp):
         boxes, faces = detector.detect(frame, True)
         if config.oper['mode']:
             preds = recognizer.recognize(faces)
-            objs, datas = tracker.track(boxes, preds, faces)
+            objs, datas, in_out = tracker.track(boxes, preds, faces)
             names = []
             boxes = []
             for obj in objs:
@@ -102,7 +106,7 @@ def main(img_queue, temp):
                     img_queue.put(data)
                     file.write(time.strftime('%H:%M\n'))
             if config.oper['display']:
-                draw(frame, boxes, names)
+                draw(frame, boxes, names, in_out)
                 cv2.imshow('frame', cv2.resize(frame, (720, 540)))
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord('q'):

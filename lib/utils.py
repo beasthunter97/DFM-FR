@@ -44,13 +44,17 @@ def write_yaml(file_path, data):
         yaml.dump(data, file)
 
 
-def draw(image, boxes, names):
+def draw(image, boxes, names, in_out=None):
     for name, (x1, y1, x2, y2) in zip(names, boxes):
         cv2.rectangle(image, (x1, y1), (x2, y2),
                       (0, 255, 0), 2)
         cv2.putText(image, name, (x1 - 15 if x1 - 30 > 0 else x1 + 15,
                                   y1 - 15 if y1 - 30 > 0 else y1 + 15),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 1)
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    if in_out is not None:
+        text = 'COUNT: {}'.format(*in_out)
+        cv2.putText(image, text, (30, 30),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
 
 def random_name(length=16, root='temp/', ext=''):

@@ -20,6 +20,7 @@ class Tracker:
         self.max_disappear = max_disappear
         self.obj = []
         self.mode = mode
+        self.in_out = [0]
         try:
             with open('log/unknown', 'r') as file:
                 self.i = int(file.read())
@@ -34,12 +35,12 @@ class Tracker:
         self.create_obj(boxes, preds, faces)
         self.update()
         # ------------------------------------------------------------------------ #
-        for obj in self.obj:
-            obj['name'] = obj['id']
-        for obj in self.new_obj:
-            obj['name'] = obj['id']
+        # for obj in self.obj:
+        #     obj['name'] = obj['id']
+        # for obj in self.new_obj:
+        #     obj['name'] = obj['id']
         # ------------------------------------------------------------------------ #
-        return self.new_obj, self.datas
+        return self.new_obj, self.datas, self.in_out
 
     def create_obj(self, boxes, preds, faces):
         for i in range(len(boxes)):
@@ -114,6 +115,7 @@ class Tracker:
 
     def export_obj(self, old):
         obj = self.obj.pop(old)
+        self.in_out[0] += 1
         if 'UNKNOWN' == obj['name']:
             for i in range(len(obj['faces'])):
                 with(open('log/unknown', 'w')) as file:
@@ -142,4 +144,8 @@ class Tracker:
                     })
 
     def get_true_names(self, preds):
-        return preds
+        conf = max(preds.values())
+        if conf < 0.6:
+            return 'UNKNOWN'
+        key = [k for k, v in preds.items() if v == conf][0]
+        return key

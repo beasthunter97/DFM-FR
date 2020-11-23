@@ -113,7 +113,12 @@ class Recognizer:
             for image in images:
                 set_input(self.model, image)
                 self.model.invoke()
-                names.append({self.labels[output_tensor(self.model, 0).argmax()]: 1})
+                index = np.argpartition(output_tensor(self.model, 0), -1)[-1:]
+                name = {}
+                print(output_tensor(self.model, 0).argmin())
+                for i in index:
+                    name.update({self.labels[i]: output_tensor(self.model, 0)[i]})
+                names.append(name)
         else:
             names = [{'UNKNOWN': 1}] * len(images)
         return names
