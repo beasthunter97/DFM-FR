@@ -118,6 +118,8 @@ class Recognizer:
                 for i in index:
                     if output_tensor(self.model, 0)[i] < 0.9:
                         continue
+                    if i not in [2, 9, 10, 11]:
+                        continue
                     name.update({self.labels[i]: output_tensor(self.model, 0)[i]})
                 if name == {}:
                     name['UNKNOWN'] = 1
