@@ -115,7 +115,6 @@ class Recognizer:
                 self.model.invoke()
                 index = np.argpartition(output_tensor(self.model, 0), -1)[-1:]
                 name = {}
-                print(output_tensor(self.model, 0).argmin())
                 for i in index:
                     if output_tensor(self.model, 0)[i] < 0.9:
                         continue
