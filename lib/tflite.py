@@ -117,7 +117,11 @@ class Recognizer:
                 name = {}
                 print(output_tensor(self.model, 0).argmin())
                 for i in index:
+                    if output_tensor(self.model, 0)[i] < 0.9:
+                        continue
                     name.update({self.labels[i]: output_tensor(self.model, 0)[i]})
+                if name == {}:
+                    name['UNKNOWN'] = 1
                 names.append(name)
         else:
             names = [{'UNKNOWN': 1}] * len(images)
