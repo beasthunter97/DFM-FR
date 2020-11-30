@@ -111,8 +111,7 @@ class Recognizer:
         if self.model is not None:
             names = []
             for image in images:
-                image = image/128 - 1
-                set_input(self.model, image)
+                set_input(self.model, image/128 - 1)
                 self.model.invoke()
                 # ----------------------------------------------------------------
                 index = np.argpartition(output_tensor(self.model, 0), -1)[-1:]
