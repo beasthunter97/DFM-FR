@@ -21,9 +21,10 @@ sudo mount -t ntfs-3g /dev/mmcblk1p1 ./temp/
                 break
             fi
         done
+        commit=$(date)
         git pull > log/update_log.txt
         git add .
-        git commit -m "Upload log"
+        git commit -m "$commit"
         git push >> log/update_log.txt
     fi
 ) &
