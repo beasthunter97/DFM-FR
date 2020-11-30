@@ -97,7 +97,6 @@ def main(img_queue, temp):
                     break
         if config.oper['mode'] != 2:
             for face in faces:
-
                 data.append({
                     'timestamp': int(time.time()),
                     'camera': 'data',
