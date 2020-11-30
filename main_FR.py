@@ -1,4 +1,3 @@
-import argparse
 import time
 from ctypes import c_uint8
 from multiprocessing import Process, Queue, Value
@@ -12,29 +11,17 @@ from lib.track import Tracker
 from lib.utils import ConfigHandler, draw
 
 
-def parse_arg():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('-s', '--source', default='vid', choices=('cam', 'vid'),
-                    help='Select input source, "cam" or "vid"')
-    ap.add_argument('-v', '--vid-path', default='test/test.m4v',
-                    help='Path to video input when source is "vid"')
-    ap.add_argument('-d', '--direction', required=True, choices=('in', 'out'),
-                    help='Camera tracking direction "in" or "out"')
-    args = vars(ap.parse_args())
-    return args
-
-
 def init_constant():
-    global config, src, stream, detector, recognizer, args, tracker
-    source = args['source']
-    dir_ = args['direction'].lower()
+    global config, src, stream, detector, recognizer, tracker
+    source = config.source['src']
+    dir_ = config.source['direction'].lower()
 
     if source == 'cam':
         VS = WebcamVideoStream
         src = config.stream[dir_]
     else:
         VS = FileVideoStream
-        src = args['vid_path']
+        src = config.source['vid_path']
     stream = VS(src).start()
     detector = Detector(config.path['detect_model'],
                         config.model_setting['min_face_HD'],
@@ -112,7 +99,6 @@ def main(img_queue, temp):
 
 if __name__ == "__main__":
     config = ConfigHandler().read()
-    args = parse_arg()
     img_queue = Queue(maxsize=128)
     temp = Value(c_uint8)
     temp.value = 1
