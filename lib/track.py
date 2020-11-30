@@ -35,10 +35,10 @@ class Tracker:
         self.create_obj(boxes, preds, faces)
         self.update()
         # ------------------------------------------------------------------------ #
-        # for obj in self.obj:
-        #     obj['name'] = obj['id']
-        # for obj in self.new_obj:
-        #     obj['name'] = obj['id']
+        for obj in self.obj:
+            obj['name'] = obj['id']
+        for obj in self.new_obj:
+            obj['name'] = obj['id']
         # ------------------------------------------------------------------------ #
         return self.new_obj, self.datas, self.in_out
 
@@ -145,7 +145,7 @@ class Tracker:
 
     def get_true_names(self, preds):
         conf = max(preds.values())
-        if conf < 0.6:
+        if conf < 0.5:
             return 'UNKNOWN'
         key = [k for k, v in preds.items() if v == conf][0]
         return key
