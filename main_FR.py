@@ -62,6 +62,7 @@ def main(img_queue, temp):
             break
         # ------------------------------------------------------------------- #
         # ---------------------------CHECK WORKING--------------------------- #
+        print(counter)
         if counter < 10:
             counter += 1
         elif counter == 10:
