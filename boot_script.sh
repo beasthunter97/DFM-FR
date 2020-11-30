@@ -32,7 +32,7 @@ sudo mount -t ntfs-3g /dev/mmcblk1p1 ./temp/
 sleep 10s
 python3 main_FR.py > log/python_log.txt
 
-sudo umount /dev/mmcblk1p1
+sudo umount ./temp/
 
 # if ping -c 2 192.168.20.78 &> /dev/null
 # then
