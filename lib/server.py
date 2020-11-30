@@ -56,9 +56,11 @@ def temp_check(temp, config):
 
         temp.value = int(out.decode("utf-8").split('000')[0])
         data = {
+            "nom": "",
             "temperature": temp.value,
             "timestamp": int(time.time()),
-            "status": 1
+            "status": 1,
+            "action": ""
         }
         try:
             response = requests.post(config.url['status'], data=data, verify=False)
