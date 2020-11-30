@@ -28,8 +28,8 @@ sudo mount -t ntfs-3g /dev/mmcblk1p1 ./temp/
     fi
 ) &
 
-sleep 3s
-python3 main_FR.py -s vid -v test1.m4v -d out > log/python_log.txt
+sleep 30s
+python3 main_FR.py > log/python_log.txt
 
 sudo umount /dev/mmcblk1p1
 
