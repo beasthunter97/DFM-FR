@@ -60,7 +60,6 @@ def main(img_queue, temp):
     counter = 0
     file = open('log/time_log.txt', 'a')
     file.write(time.strftime('# %d.%m\n'))
-    ff = 0
     while True:
 
         # -------------------------CHECK TEMPERATURE------------------------- #
@@ -74,9 +73,6 @@ def main(img_queue, temp):
         if frame is None:
             stop()
             break
-        if ff <= 700:
-            ff += 1
-            continue
         # ------------------------------------------------------------------- #
         # -------------------------------MAIN-1------------------------------ #
         if counter < 10:
