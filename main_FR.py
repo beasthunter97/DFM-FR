@@ -61,12 +61,15 @@ def main(img_queue, temp):
             stop()
             break
         # ------------------------------------------------------------------- #
-        # -------------------------------MAIN-1------------------------------ #
+        # ---------------------------CHECK WORKING--------------------------- #
         if counter < 10:
             counter += 1
         elif counter == 10:
+            counter = 11
             with open('log/working', 'w') as f:
                 f.write('true')
+        # ------------------------------------------------------------------- #
+        # --------------------------------MAIN------------------------------- #
         boxes, faces = detector.detect(frame, True)
         if config.oper['mode']:
             preds = recognizer.recognize(faces)
@@ -82,12 +85,6 @@ def main(img_queue, temp):
                     pos[0] + size//2,
                     pos[1] + size//2
                 ])
-            for data in datas:
-                if img_queue.qsize() >= 126:
-                    save(data, img_queue)
-                else:
-                    img_queue.put(data)
-                    file.write(time.strftime('%H:%M\n'))
             if config.oper['display']:
                 draw(frame, boxes, names, in_out)
                 cv2.imshow('frame', cv2.resize(frame, (720, 540)))
@@ -95,16 +92,22 @@ def main(img_queue, temp):
                 if key == ord('q'):
                     stop()
                     break
+        # ------------------------------------------------------------------- #
+        # -----------------------------SEND-DATA----------------------------- #
         if config.oper['mode'] != 2:
-            for face in faces:
-                data.append({
-                    'timestamp': int(time.time()),
-                    'camera': 'data',
-                    'name': '',
-                    'capture': image_encode(face)
-                })
+            if counter % config.oper['frame_per_capture'] != 0:
+                counter += 1
+            else:
+                counter = 11
+                for face in faces:
+                    datas.append({
+                        'timestamp': int(time.time()),
+                        'camera': 'data',
+                        'name': '',
+                        'capture': image_encode(face)
+                    })
         for data in datas:
-            if img_queue.qsize() >= 126:
+            if img_queue.qsize() >= 120:
                 save(data, img_queue)
             else:
                 img_queue.put(data)

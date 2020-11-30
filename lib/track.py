@@ -23,11 +23,11 @@ class Tracker:
         self.in_out = [0]
         try:
             with open('log/unknown', 'r') as file:
-                self.i = int(file.read())
-                if self.i >= 1000:
-                    self.i = 0
+                self.unknown = int(file.read())
+                if self.unknown >= 1000:
+                    self.unknown = 0
         except FileNotFoundError:
-            self.i = 0
+            self.unknown = 0
 
     def track(self, boxes, preds, faces):
         self.new_obj = []
@@ -35,10 +35,10 @@ class Tracker:
         self.create_obj(boxes, preds, faces)
         self.update()
         # ------------------------------------------------------------------------ #
-        for obj in self.obj:
-            obj['name'] = obj['id']
-        for obj in self.new_obj:
-            obj['name'] = obj['id']
+        # for obj in self.obj:
+        #     obj['name'] = obj['id']
+        # for obj in self.new_obj:
+        #     obj['name'] = obj['id']
         # ------------------------------------------------------------------------ #
         return self.new_obj, self.datas, self.in_out
 
@@ -86,14 +86,16 @@ class Tracker:
                     self.update_obj(new=new)
 
     def update_obj(self, new=None, old=None):
+        # New obj and old obj is the same obj
         if old is not None and new is not None:
             for name in self.obj[old]['pred']:
                 if name in self.new_obj[new]['pred']:
                     self.new_obj[new]['pred'][name] += self.obj[old]['pred'][name]
                 else:
                     self.new_obj[new]['pred'][name] = self.obj[old]['pred'][name]
-            if self.obj[old]['faces'] < 5:
-                self.new_obj[new]['faces'].extend(self.obj[old]['faces'])
+            self.new_obj[new]['faces'].extend(self.obj[old]['faces'])
+            if self.obj[old]['faces'] > 3:
+                self.new_obj[new]['faces'] = self.new_obj[new]['faces'][:3]
             self.new_obj[new]['id'] = self.obj[old]['id']
             self.new_obj[new]['name'] = self.get_true_names(self.new_obj[new]['pred'])
             self.obj[old].update(self.new_obj[new])
@@ -101,11 +103,13 @@ class Tracker:
                 self.obj[old]['size'] < 0 else ''
             self.obj[old]['appear'] += 1
             self.obj[old]['disappear'] = 0
+        # Existed obj is not in current frame
         elif old is not None:
             self.obj[old]['disappear'] += 1
             if self.obj[old]['disappear'] > self.max_disappear:
                 if self.obj[old]['appear'] > self.min_appear:
                     self.export_obj(old)
+        # New obj appear
         elif new is not None:
             self.obj.append(self.new_obj[new])
             self.obj[-1].update({
@@ -118,31 +122,16 @@ class Tracker:
         obj = self.obj.pop(old)
         self.in_out[0] += 1
         if 'UNKNOWN' == obj['name']:
-            for i in range(len(obj['faces'])):
-                with(open('log/unknown', 'w')) as file:
-                    file.write(str(self.i))
-                self.i += 1
-                self.datas.append({
-                    'timestamp': int(time.time()),
-                    'camera': obj['dir'],
-                    'name': '%s-%d' % (obj['name'], self.i),
-                    'capture': image_encode(obj['faces'][i])
-                })
-        else:
-            self.datas.append({
-                'timestamp': int(time.time()),
-                'camera': obj['dir'],
-                'name': obj['name'],
-                'capture': image_encode(obj['faces'][-3])
-            })
-            if self.mode == 1:
-                for img in obj['faces'][1:-3]:
-                    self.datas.append({
-                        'timestamp': int(time.time()),
-                        'camera': obj['dir'],
-                        'name': obj['name'],
-                        'capture': image_encode(img)
-                    })
+            obj['name'] = '%s-%d' % (obj['name'], self.unknown)
+            with(open('log/unknown', 'w')) as file:
+                file.write(str(self.unknown))
+            self.unknown += 1
+        self.datas.append({
+            'timestamp': int(time.time()),
+            'camera': obj['dir'],
+            'name': obj['name'],
+            'capture': image_encode(obj['faces'][-1])
+        })
 
     def get_true_names(self, preds):
         conf = max(preds.values())
