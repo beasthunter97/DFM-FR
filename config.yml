@@ -40,5 +40,5 @@ oper:
   max_temp: 60
   time_check_temp: 20
   overheated_sleep: 5
-  display: 1
+  display: 0
   max_item: 10

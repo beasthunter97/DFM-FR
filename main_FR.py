@@ -67,7 +67,7 @@ def main(img_queue, temp):
         elif counter == 10:
             counter = 11
             with open('log/working', 'w') as f:
-                f.write('true')
+                f.write('true\n')
         # ------------------------------------------------------------------- #
         # --------------------------------MAIN------------------------------- #
         boxes, faces = detector.detect(frame, True)
