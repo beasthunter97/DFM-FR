@@ -7,7 +7,7 @@ from imutils.video import FileVideoStream, WebcamVideoStream
 
 from lib.server import save, server_send, temp_check
 from lib.tflite import Detector, Recognizer
-from lib.track import Tracker
+from lib.track import Tracker, image_encode
 from lib.utils import ConfigHandler, draw
 
 
@@ -95,6 +95,21 @@ def main(img_queue, temp):
                 if key == ord('q'):
                     stop()
                     break
+        if config.oper['mode'] != 2:
+            for face in faces:
+
+                data.append({
+                    'timestamp': int(time.time()),
+                    'camera': 'data',
+                    'name': '',
+                    'capture': image_encode(face)
+                })
+        for data in datas:
+            if img_queue.qsize() >= 126:
+                save(data, img_queue)
+            else:
+                img_queue.put(data)
+                file.write(time.strftime('%H:%M\n'))
 
 
 if __name__ == "__main__":
