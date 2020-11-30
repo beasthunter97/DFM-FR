@@ -94,7 +94,7 @@ class Tracker:
                 else:
                     self.new_obj[new]['pred'][name] = self.obj[old]['pred'][name]
             self.new_obj[new]['faces'].extend(self.obj[old]['faces'])
-            if self.obj[old]['faces'] > 3:
+            if len(self.obj[old]['faces']) > 3:
                 self.new_obj[new]['faces'] = self.new_obj[new]['faces'][:3]
             self.new_obj[new]['id'] = self.obj[old]['id']
             self.new_obj[new]['name'] = self.get_true_names(self.new_obj[new]['pred'])
