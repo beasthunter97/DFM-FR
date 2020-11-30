@@ -94,7 +94,7 @@ def main(img_queue, temp):
                     break
         # ------------------------------------------------------------------- #
         # -----------------------------SEND-DATA----------------------------- #
-        if config.oper['mode'] != 2:
+        if config.oper['mode'] != 2 and counter > 10:
             if counter % config.oper['frame_per_capture'] != 0:
                 counter += 1
             else:
