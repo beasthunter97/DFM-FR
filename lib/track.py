@@ -13,7 +13,7 @@ def image_encode(img):
 
 class Tracker:
     def __init__(self, config):
-        direction = config.oper['direction']
+        direction = config.source['direction']
         self.dir = direction.capitalize()
         self.min_dist = config.tracker['min_dist'][direction]
         self.min_appear = config.tracker['min_appear'][direction]
