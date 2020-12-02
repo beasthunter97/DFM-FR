@@ -70,7 +70,7 @@ def main(img_queue, temp):
             with open('log/working', 'w') as f:
                 f.write('true\n')
         # ------------------------------------------------------------------- #
-        # --------------------------------MAIN------------------------------- #
+        # -------------------------------TRACK------------------------------- #
         boxes, faces = detector.detect(frame, True)
         if config.oper['mode']:
             preds = recognizer.recognize(faces)
@@ -86,13 +86,6 @@ def main(img_queue, temp):
                     pos[0] + size//2,
                     pos[1] + size//2
                 ])
-            if config.oper['display']:
-                draw(frame, boxes, names, in_out)
-                cv2.imshow('frame', cv2.resize(frame, (720, 540)))
-                key = cv2.waitKey(1) & 0xFF
-                if key == ord('q'):
-                    stop()
-                    break
         # ------------------------------------------------------------------- #
         # -----------------------------SEND-DATA----------------------------- #
         if config.oper['mode'] != 2 and counter > 10:
@@ -113,6 +106,15 @@ def main(img_queue, temp):
             else:
                 img_queue.put(data)
                 file.write(time.strftime('%H:%M\n'))
+        # ------------------------------------------------------------------- #
+        # ------------------------------DISPLAY------------------------------ #
+        if config.oper['display']:
+            draw(frame, boxes, names, in_out)
+            cv2.imshow('frame', cv2.resize(frame, (720, 540)))
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
+                stop()
+                break
 
 
 if __name__ == "__main__":
