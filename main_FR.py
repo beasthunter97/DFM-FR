@@ -48,7 +48,7 @@ def main(img_queue, temp):
     file = open('log/time_log.txt', 'a')
     file.write(time.strftime('# %d.%m\n'))
     while True:
-
+        # ------------------------------------------------------------------- #
         # -------------------------CHECK TEMPERATURE------------------------- #
         if temp.value > config.oper['max_temp']:
             print('Overheated, sleep for 5 seconds')
@@ -62,7 +62,6 @@ def main(img_queue, temp):
             break
         # ------------------------------------------------------------------- #
         # ---------------------------CHECK WORKING--------------------------- #
-        print(counter)
         if counter < 10:
             counter += 1
         elif counter == 10:
@@ -101,11 +100,11 @@ def main(img_queue, temp):
                         'capture': image_encode(face)
                     })
         for data in datas:
+            file.write(time.strftime('%H:%M\n'))
             if img_queue.qsize() >= 120:
                 save(data, img_queue)
             else:
                 img_queue.put(data)
-                file.write(time.strftime('%H:%M\n'))
         # ------------------------------------------------------------------- #
         # ------------------------------DISPLAY------------------------------ #
         if config.oper['display']:
