@@ -18,7 +18,7 @@ def init_constant():
 
     if source == 'cam':
         VS = WebcamVideoStream
-        src = config.stream[dir_.lower()]
+        src = config.stream[dir_]
     else:
         VS = FileVideoStream
         src = config.source['vid_path']
