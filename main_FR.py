@@ -77,10 +77,10 @@ def main(img_queue, temp):
                 names.append(str(obj['name']))
                 pos, size = obj['pos'], obj['size']
                 boxes.append([
-                    pos[0] - size//3,
-                    pos[1] - size//3,
-                    pos[0] + size//3,
-                    pos[1] + size//3
+                    pos[0] - size//2,
+                    pos[1] - size//2,
+                    pos[0] + size//2,
+                    pos[1] + size//2
                 ])
         # ------------------------------------------------------------------- #
         # -----------------------------SEND-DATA----------------------------- #
