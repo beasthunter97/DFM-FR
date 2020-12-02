@@ -14,7 +14,7 @@ from lib.utils import ConfigHandler, draw
 def init_constant():
     global config, src, stream, detector, recognizer, tracker
     source = config.source['src']
-    dir_ = config.source['direction'].lower()
+    dir_ = config.source['direction']
 
     if source == 'cam':
         VS = WebcamVideoStream
