@@ -67,7 +67,7 @@ def main(img_queue, temp):
                 f.write('true\n')
         # ------------------------------------------------------------------- #
         # -------------------------------TRACK------------------------------- #
-        boxes, faces = detector.detect(frame, True)
+        boxes, faces = detector.detect(frame.copy(), True)
         if config.oper['mode']:
             preds = recognizer.recognize(faces)
             objs, datas, in_out = tracker.track(boxes, preds, faces)
@@ -105,9 +105,8 @@ def main(img_queue, temp):
         # ------------------------------------------------------------------- #
         # ------------------------------DISPLAY------------------------------ #
         if config.oper['display']:
-            show = frame.copy()
-            draw(show, boxes, names, in_out)
-            cv2.imshow('frame', cv2.resize(show, (720, 540)))
+            draw(frame, boxes, names, in_out)
+            cv2.imshow('frame', cv2.resize(frame, (720, 540)))
             key = cv2.waitKey(1) & 0xFF
             if key == ord('q'):
                 stop()
