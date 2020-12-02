@@ -28,8 +28,8 @@ tracker:
     in: 10
     out: 10
   min_appear:
-    in: 3
-    out: 3
+    in: 4
+    out: 4
   max_disappear:
     in: 8
     out: 8
