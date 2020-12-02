@@ -89,7 +89,6 @@ def main(img_queue, temp):
             if config.oper['display']:
                 draw(frame, boxes, names, in_out)
                 cv2.imshow('frame', cv2.resize(frame, (720, 540)))
-                cv2.moveWindow('frame', 20, 20)
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord('q'):
                     stop()
