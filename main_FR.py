@@ -42,6 +42,8 @@ def main(img_queue, temp):
     counter = 0
     file = open('log/time_log.txt', 'a')
     file.write(time.strftime('# %d.%m\n'))
+    cv2.namedWindow('frame')
+    cv2.moveWindow('frame', 20, 20)
     while True:
         # ------------------------------------------------------------------- #
         # -------------------------CHECK TEMPERATURE------------------------- #

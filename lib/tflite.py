@@ -92,7 +92,7 @@ class Detector:
             for x1, y1, x2, y2 in boxes:
                 face = image[y1:y2, x1:x2].copy()
                 faces.append(cv2.resize(face, self.face_size))
-            return boxes, np.array(faces).copy()
+            return boxes, faces
         else:
             return boxes
 
