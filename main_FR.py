@@ -111,6 +111,7 @@ def main(img_queue, temp):
             if key == ord('q'):
                 stop()
                 break
+            del frame
 
 
 if __name__ == "__main__":
