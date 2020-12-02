@@ -90,7 +90,7 @@ class Detector:
         if return_faces:
             faces = []
             for x1, y1, x2, y2 in boxes:
-                face = image[y1:y2, x1:x2].copy()
+                face = image[y1:y2, x1:x2].copy() + 1 - 1
                 faces.append(cv2.resize(face, self.face_size))
             return boxes, faces
         else:
