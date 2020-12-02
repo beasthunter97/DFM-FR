@@ -53,6 +53,7 @@ class Tracker:
                 'name': self.get_true_names(preds[i]),
                 'size': x2-x1,
                 'pred': preds[i],
+                'dir': self.dir
             })
 
     def update(self):
@@ -99,8 +100,6 @@ class Tracker:
             self.new_obj[new]['id'] = self.obj[old]['id']
             self.new_obj[new]['name'] = self.get_true_names(self.new_obj[new]['pred'])
             self.obj[old].update(self.new_obj[new])
-            self.obj[old]['dir'] = self.dir if self.obj[old]['size_0'] -\
-                self.obj[old]['size'] < 0 else ''
             self.obj[old]['appear'] += 1
             self.obj[old]['disappear'] = 0
         # Existed obj is not in current frame
