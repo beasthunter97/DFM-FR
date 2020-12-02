@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import copy
 import tflite_runtime.interpreter as tflite
 
 EDGETPU_SHARED_LIB = 'libedgetpu.so.1'
@@ -90,7 +91,7 @@ class Detector:
         if return_faces:
             faces = []
             for x1, y1, x2, y2 in boxes:
-                face = image[y1:y2, x1:x2].copy()
+                face = copy.deepcopy(image[y1:y2, x1:x2])
                 faces.append(cv2.resize(face, self.face_size))
             return boxes, faces
         else:
