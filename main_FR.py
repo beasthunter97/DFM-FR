@@ -13,12 +13,10 @@ from lib.utils import ConfigHandler, draw
 
 def init_constant():
     global config, src, stream, detector, recognizer, tracker
-    source = config.source['src']
-    dir_ = config.source['direction']
 
-    if source == 'cam':
+    if config.source['src'] == 'cam':
         VS = WebcamVideoStream
-        src = config.stream[dir_]
+        src = config.stream[config.source['direction']]
     else:
         VS = FileVideoStream
         src = config.source['vid_path']
@@ -30,10 +28,7 @@ def init_constant():
     recognizer = Recognizer(config.path['recog_model'],
                             config.path['labels'],
                             config.oper['mode'])
-    tracker = Tracker(dir_, config.tracker['min_dist'][dir_],
-                      config.tracker['min_appear'][dir_],
-                      config.tracker['max_disappear'][dir_],
-                      config.oper['mode'])
+    tracker = Tracker(config)
 
 
 def main(img_queue, temp):

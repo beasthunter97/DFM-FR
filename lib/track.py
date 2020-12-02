@@ -12,15 +12,16 @@ def image_encode(img):
 
 
 class Tracker:
-    def __init__(self, direction='OUT', min_dist=10, min_appear=3,
-                 max_disappear=7, mode=1):
+    def __init__(self, config):
+        direction = config.oper['direction']
         self.dir = direction.capitalize()
-        self.min_dist = min_dist
-        self.min_appear = min_appear
-        self.max_disappear = max_disappear
+        self.min_dist = config.tracker['min_dist'][direction]
+        self.min_appear = config.tracker['min_appear'][direction]
+        self.max_disappear = config.tracker['max_disappear'][direction]
         self.obj = []
-        self.mode = mode
+        self.mode = config.oper['mode']
         self.in_out = [0]
+        self.max_stack = config.oper['max_img_stack']
         try:
             with open('log/unknown', 'r') as file:
                 self.unknown = int(file.read())
@@ -95,8 +96,8 @@ class Tracker:
                 else:
                     self.new_obj[new]['pred'][name] = self.obj[old]['pred'][name]
             self.new_obj[new]['faces'].extend(self.obj[old]['faces'])
-            if len(self.obj[old]['faces']) > 3:
-                self.new_obj[new]['faces'] = self.new_obj[new]['faces'][:3]
+            if len(self.obj[old]['faces']) > self.max_stack:
+                self.new_obj[new]['faces'] = self.new_obj[new]['faces'][:self.max_stack]
             self.new_obj[new]['id'] = self.obj[old]['id']
             self.new_obj[new]['name'] = self.get_true_names(self.new_obj[new]['pred'])
             self.obj[old].update(self.new_obj[new])
