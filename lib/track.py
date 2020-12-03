@@ -19,7 +19,6 @@ class Tracker:
         self.min_appear = config.tracker['min_appear'][direction]
         self.max_disappear = config.tracker['max_disappear'][direction]
         self.obj = []
-        self.mode = config.oper['mode']
         self.in_out = [0]
         self.max_stack = config.oper['max_img_stack']
         self.skip = config.oper['skip_frame']
