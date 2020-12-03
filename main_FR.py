@@ -26,8 +26,7 @@ def init_constant():
                         config.model_setting['threshold'],
                         config.model_setting['face_size'])
     recognizer = Recognizer(config.path['recog_model'],
-                            config.path['labels'],
-                            config.oper['mode'])
+                            config.path['labels'])
     tracker = Tracker(config)
 
 

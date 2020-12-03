@@ -98,8 +98,8 @@ class Detector:
 
 
 class Recognizer:
-    def __init__(self, model_path, labels, mode=1):
-        if model_path is None or not mode:
+    def __init__(self, model_path, labels):
+        if model_path is None or labels is None:
             self.model = None
         else:
             with open(labels, 'r') as file:
