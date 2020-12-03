@@ -127,9 +127,9 @@ class Tracker:
             with(open('log/unknown', 'w')) as file:
                 file.write(str(self.unknown))
             self.unknown += 1
-            face_index = [0, len(obj['face'])]
+            face_index = [0, len(obj['faces'])]
         else:
-            face_index = len(obj['face'])//2
+            face_index = len(obj['faces'])//2
             face_index = [face_index, face_index + 1]
         for i in range(*face_index):
             self.datas.append({
