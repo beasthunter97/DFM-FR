@@ -70,9 +70,9 @@ class Detector:
         else:
             self.face_size = face_size
 
-    def detect(self, images, return_faces=False):
-        h, w = images.shape[:2]
-        inp = cv2.cvtColor(images, cv2.COLOR_BGR2RGB)
+    def detect(self, image, return_faces=False):
+        h, w = image.shape[:2]
+        inp = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         inp = cv2.resize(inp, (320, 320))
         set_input(self.model, inp)
         self.model.invoke()
@@ -90,7 +90,7 @@ class Detector:
         if return_faces:
             faces = []
             for x1, y1, x2, y2 in boxes:
-                face = images[y1:y2, x1:x2].copy()
+                face = image[y1:y2, x1:x2].copy()
                 faces.append(cv2.resize(face, self.face_size))
             return boxes, faces
         else:
@@ -98,8 +98,8 @@ class Detector:
 
 
 class Recognizer:
-    def __init__(self, model_path, labels, mode=1):
-        if model_path is None or not mode:
+    def __init__(self, model_path, labels):
+        if model_path is None or labels is None:
             self.model = None
         else:
             with open(labels, 'r') as file:

@@ -7,18 +7,16 @@ from imutils.video import FileVideoStream, WebcamVideoStream
 
 from lib.server import save, server_send, temp_check
 from lib.tflite import Detector, Recognizer
-from lib.track import Tracker, image_encode
+from lib.track import Tracker
 from lib.utils import ConfigHandler, draw
 
 
 def init_constant():
     global config, src, stream, detector, recognizer, tracker
-    source = config.source['src']
-    dir_ = config.source['direction'].lower()
 
-    if source == 'cam':
+    if config.source['src'] == 'cam':
         VS = WebcamVideoStream
-        src = config.stream[dir_]
+        src = config.stream[config.source['direction']]
     else:
         VS = FileVideoStream
         src = config.source['vid_path']
@@ -28,12 +26,8 @@ def init_constant():
                         config.model_setting['threshold'],
                         config.model_setting['face_size'])
     recognizer = Recognizer(config.path['recog_model'],
-                            config.path['labels'],
-                            config.oper['mode'])
-    tracker = Tracker(dir_, config.tracker['min_dist'][dir_],
-                      config.tracker['min_appear'][dir_],
-                      config.tracker['max_disappear'][dir_],
-                      config.oper['mode'])
+                            config.path['labels'])
+    tracker = Tracker(config)
 
 
 def main(img_queue, temp):
@@ -47,8 +41,10 @@ def main(img_queue, temp):
     counter = 0
     file = open('log/time_log.txt', 'a')
     file.write(time.strftime('# %d.%m\n'))
+    cv2.namedWindow('frame')
+    cv2.moveWindow('frame', 20, 20)
     while True:
-
+        # ------------------------------------------------------------------- #
         # -------------------------CHECK TEMPERATURE------------------------- #
         if temp.value > config.oper['max_temp']:
             print('Overheated, sleep for 5 seconds')
@@ -65,53 +61,44 @@ def main(img_queue, temp):
         if counter < 10:
             counter += 1
         elif counter == 10:
-            counter = 11
+            counter += 1
             with open('log/working', 'w') as f:
-                f.write('true')
+                f.write('true\n')
         # ------------------------------------------------------------------- #
-        # --------------------------------MAIN------------------------------- #
+        # -------------------------------TRACK------------------------------- #
         boxes, faces = detector.detect(frame, True)
-        if config.oper['mode']:
-            preds = recognizer.recognize(faces)
-            objs, datas, in_out = tracker.track(boxes, preds, faces)
-            names = []
-            boxes = []
-            for obj in objs:
-                names.append(str(obj['name']))
-                pos, size = obj['pos'], obj['size']
-                boxes.append([
-                    pos[0] - size//2,
-                    pos[1] - size//2,
-                    pos[0] + size//2,
-                    pos[1] + size//2
-                ])
-            if config.oper['display']:
-                draw(frame, boxes, names, in_out)
-                cv2.imshow('frame', cv2.resize(frame, (720, 540)))
-                key = cv2.waitKey(1) & 0xFF
-                if key == ord('q'):
-                    stop()
-                    break
+        preds = recognizer.recognize(faces)
+        objs, datas, in_out = tracker.track(boxes, preds, faces)
+        names = []
+        boxes = []
+        for obj in objs:
+            names.append(str(obj['name']))
+            pos, size = obj['pos'], obj['size']
+            boxes.append([
+                pos[0] - size//2,
+                pos[1] - size//2,
+                pos[0] + size//2,
+                pos[1] + size//2
+            ])
         # ------------------------------------------------------------------- #
         # -----------------------------SEND-DATA----------------------------- #
-        if config.oper['mode'] != 2:
-            if counter % config.oper['frame_per_capture'] != 0:
-                counter += 1
-            else:
-                counter = 11
-                for face in faces:
-                    datas.append({
-                        'timestamp': int(time.time()),
-                        'camera': 'data',
-                        'name': '',
-                        'capture': image_encode(face)
-                    })
         for data in datas:
+            file.write(time.strftime('%H:%M\n'))
             if img_queue.qsize() >= 120:
                 save(data, img_queue)
             else:
                 img_queue.put(data)
-                file.write(time.strftime('%H:%M\n'))
+        # ------------------------------------------------------------------- #
+        # ------------------------------DISPLAY------------------------------ #
+        if config.oper['display']:
+            show = frame.copy()
+            draw(show, boxes, names, in_out)
+            cv2.imshow('frame', cv2.resize(show, (720, 540)))
+            key = cv2.waitKey(1) & 0xFF
+            del show
+            if key == ord('q'):
+                stop()
+                break
 
 
 if __name__ == "__main__":

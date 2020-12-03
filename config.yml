@@ -28,17 +28,17 @@ tracker:
     in: 10
     out: 10
   min_appear:
-    in: 3
-    out: 3
+    in: 4
+    out: 4
   max_disappear:
     in: 8
     out: 8
 
 oper:
-  mode: 1 # 0: send data only, 1: send data & tracking, 2: tracking only
-  frame_per_capture: 5
+  skip_frame: 4
   max_temp: 60
   time_check_temp: 20
   overheated_sleep: 5
   display: 1
   max_item: 10
+  max_img_stack: 10

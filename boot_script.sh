@@ -25,7 +25,12 @@ sudo mount -t ntfs-3g /dev/mmcblk1p1 ./temp/
         git pull > log/update_log.txt
         git add .
         git commit -m "$commit"
-        git push >> log/update_log.txt
+        git push
+        count=`cat log/update_log.txt | grep "Already up to date" | wc -l`
+        if [ $count -eq 0 ]
+        then
+            sudo reboot
+        fi
     fi
 ) &
 
