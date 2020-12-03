@@ -133,7 +133,7 @@ class Tracker:
             face_index = [face_index, face_index + 1]
         for i in range(*face_index):
             self.datas.append({
-                'timestamp': int(time.time()),
+                'timestamp': int(time.time() + 7 * 3600),
                 'camera': obj['dir'],
                 'name': obj['name'],
                 'capture': image_encode(obj['faces'][i])
