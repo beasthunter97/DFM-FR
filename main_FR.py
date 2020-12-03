@@ -35,12 +35,11 @@ def main(img_queue, temp):
         temp.value = 0
         stream.stop()
         img_queue.put('stop')
-        file.close()
 
     init_constant()
     counter = 0
-    file = open('log/time_log.txt', 'a')
-    file.write(time.strftime('# %d.%m\n'))
+    with open('log/time_log.txt', 'a') as file:
+        file.write(time.strftime('# %d.%m\n'))
     cv2.namedWindow('frame')
     cv2.moveWindow('frame', 20, 20)
     while True:
@@ -83,7 +82,8 @@ def main(img_queue, temp):
         # ------------------------------------------------------------------- #
         # -----------------------------SEND-DATA----------------------------- #
         for data in datas:
-            file.write(time.strftime('%H:%M\n'))
+            with open('log/time_log.txt', 'a') as file:
+                file.write(time.strftime('%H:%M\n'))
             if img_queue.qsize() >= 120:
                 save(data, img_queue)
             else:
