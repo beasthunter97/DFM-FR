@@ -3,5 +3,6 @@
 temp*
 test*
 log/*
+!log/time_log.txt
 *__pycache__/
 .ipynb_checkpoints
