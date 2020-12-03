@@ -7,7 +7,7 @@ from imutils.video import FileVideoStream, WebcamVideoStream
 
 from lib.server import save, server_send, temp_check
 from lib.tflite import Detector, Recognizer
-from lib.track import Tracker, image_encode
+from lib.track import Tracker
 from lib.utils import ConfigHandler, draw
 
 
@@ -62,40 +62,27 @@ def main(img_queue, temp):
         if counter < 10:
             counter += 1
         elif counter == 10:
-            counter = 11
+            counter += 1
             with open('log/working', 'w') as f:
                 f.write('true\n')
         # ------------------------------------------------------------------- #
         # -------------------------------TRACK------------------------------- #
         boxes, faces = detector.detect(frame, True)
-        if config.oper['mode']:
-            preds = recognizer.recognize(faces)
-            objs, datas, in_out = tracker.track(boxes, preds, faces)
-            names = []
-            boxes = []
-            for obj in objs:
-                names.append(str(obj['name']))
-                pos, size = obj['pos'], obj['size']
-                boxes.append([
-                    pos[0] - size//2,
-                    pos[1] - size//2,
-                    pos[0] + size//2,
-                    pos[1] + size//2
-                ])
+        preds = recognizer.recognize(faces)
+        objs, datas, in_out = tracker.track(boxes, preds, faces)
+        names = []
+        boxes = []
+        for obj in objs:
+            names.append(str(obj['name']))
+            pos, size = obj['pos'], obj['size']
+            boxes.append([
+                pos[0] - size//2,
+                pos[1] - size//2,
+                pos[0] + size//2,
+                pos[1] + size//2
+            ])
         # ------------------------------------------------------------------- #
         # -----------------------------SEND-DATA----------------------------- #
-        if config.oper['mode'] != 2 and counter > 10:
-            if counter % config.oper['frame_per_capture'] != 0:
-                counter += 1
-            else:
-                counter = 11
-                for face in faces:
-                    datas.append({
-                        'timestamp': int(time.time()),
-                        'camera': 'data',
-                        'name': '',
-                        'capture': image_encode(face)
-                    })
         for data in datas:
             file.write(time.strftime('%H:%M\n'))
             if img_queue.qsize() >= 120:
@@ -109,6 +96,7 @@ def main(img_queue, temp):
             draw(show, boxes, names, in_out)
             cv2.imshow('frame', cv2.resize(show, (720, 540)))
             key = cv2.waitKey(1) & 0xFF
+            del show
             if key == ord('q'):
                 stop()
                 break

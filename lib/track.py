@@ -22,10 +22,11 @@ class Tracker:
         self.mode = config.oper['mode']
         self.in_out = [0]
         self.max_stack = config.oper['max_img_stack']
+        self.skip = config.oper['skip_frame']
         try:
             with open('log/unknown', 'r') as file:
                 self.unknown = int(file.read())
-                if self.unknown >= 1000:
+                if self.unknown >= 10000:
                     self.unknown = 0
         except FileNotFoundError:
             self.unknown = 0
@@ -95,7 +96,8 @@ class Tracker:
                     self.new_obj[new]['pred'][name] += self.obj[old]['pred'][name]
                 else:
                     self.new_obj[new]['pred'][name] = self.obj[old]['pred'][name]
-            self.new_obj[new]['faces'].extend(self.obj[old]['faces'])
+            if self.obj[old]['appear'] % self.skip:
+                self.new_obj[new]['faces'].extend(self.obj[old]['faces'])
             if len(self.obj[old]['faces']) > self.max_stack:
                 self.new_obj[new]['faces'] = self.new_obj[new]['faces'][:self.max_stack]
             self.new_obj[new]['id'] = self.obj[old]['id']
@@ -126,12 +128,17 @@ class Tracker:
             with(open('log/unknown', 'w')) as file:
                 file.write(str(self.unknown))
             self.unknown += 1
-        self.datas.append({
-            'timestamp': int(time.time()),
-            'camera': obj['dir'],
-            'name': obj['name'],
-            'capture': image_encode(obj['faces'][-1])
-        })
+            face_index = [0, len(obj['face'])]
+        else:
+            face_index = len(obj['face'])//2
+            face_index = [face_index, face_index + 1]
+        for i in range(*face_index):
+            self.datas.append({
+                'timestamp': int(time.time()),
+                'camera': obj['dir'],
+                'name': obj['name'],
+                'capture': image_encode(obj['faces'][i])
+            })
 
     def get_true_names(self, preds):
         conf = max(preds.values())
