@@ -139,9 +139,6 @@ class Tracker:
                 'capture': image_encode(obj['faces'][i])
             })
 
-
-
-
     def get_true_names(self, preds):
         conf = max(preds.values())
         if conf < 0.5:
