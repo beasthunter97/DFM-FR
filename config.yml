@@ -21,7 +21,7 @@ model_setting:
   min_face_HD: 72
   min_face_FHD: 96
   threshold: 0.3
-  face_size: 96
+  face_size: 112
 
 tracker:
   min_dist:
