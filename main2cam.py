@@ -137,6 +137,7 @@ def main(img_queue, temp):
 
 if __name__ == "__main__":
     config = ConfigHandler().read()
+    config.source['direction'] = 'in'
     img_queue = Queue(maxsize=128)
     temp = Value(c_uint8)
     temp.value = 1
