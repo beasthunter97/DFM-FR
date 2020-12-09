@@ -7,7 +7,7 @@ sudo mount -t ntfs-3g /dev/mmcblk1p1 ./temp/
 
 (
     echo "false" > log/working
-    sleep 30s
+    sleep 60s
     working=$(cat log/working)
     if ! $working
     then
@@ -34,9 +34,8 @@ sudo mount -t ntfs-3g /dev/mmcblk1p1 ./temp/
     fi
 ) &
 
-sleep 10s
-python3 main_FR.py --direction "in" &
-python3 main_FR.py --direction "out"
+sleep 5s
+python3 main_FR.py
 
 sudo umount ./temp/
 

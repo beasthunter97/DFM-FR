@@ -1,12 +1,13 @@
 source:
-  direction: out
   src: cam
   vid_path: test/test.m4v
 
 path:
-  detect_model: models/ssd_mobilenet_v2_face_quant_postprocess_edgetpu.tflite
+  # detect_model: models/ssd_mobilenet_v2_face_quant_postprocess_edgetpu.tflite
+  detect_model: models/detection_toco_1_edgetpu(1).tflite
   # recog_model: models/mobilenet_recog_quantized_edgetpu.tflite
-  recog_model: models/model_quant_edgetpu.tflite
+  # recog_model: models/model_quant_edgetpu.tflite
+  recog_model: models/model_quant_edgetpu(1).tflite
   labels: models/labels.pbtxt
 
 stream:
