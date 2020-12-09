@@ -11,7 +11,8 @@ path:
 
 stream:
   out: rtsp://192.168.200.80:555/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream
-  in: rtsp://192.168.200.78:556/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream
+  # in: rtsp://192.168.200.78:556/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream
+  in: rtsp://192.168.200.78:554/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream
 
 url:
   capture: http://htv.ai.dfm-engineering.com/api/v1/admin/public/uplink

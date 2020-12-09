@@ -58,7 +58,7 @@ def temp_check(temp, config):
         data = {
             "nom": "In",
             "temperature": temp.value,
-            "timestamp": int(time.time()),
+            "timestamp": int(time.time()) + 7*3600,
             "status": 1,
         }
         try:

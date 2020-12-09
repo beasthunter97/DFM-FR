@@ -1,3 +1,4 @@
+import argparse
 import time
 from ctypes import c_uint8
 from multiprocessing import Process, Queue, Value
@@ -9,6 +10,14 @@ from lib.server import save, server_send, temp_check
 from lib.tflite import Detector, Recognizer
 from lib.track import Tracker
 from lib.utils import ConfigHandler, draw
+
+
+def parse_arg():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('-d', '--direction', default='in', choices=('in', 'out'),
+                    help='Camera tracking direction "in" or "out"')
+    args = vars(ap.parse_args())
+    return args['direction']
 
 
 def init_constant():
@@ -102,7 +111,9 @@ def main(img_queue, temp):
 
 
 if __name__ == "__main__":
+    direction = parse_arg()
     config = ConfigHandler().read()
+    config.source['direction'] = direction
     img_queue = Queue(maxsize=128)
     temp = Value(c_uint8)
     temp.value = 1

@@ -35,7 +35,8 @@ sudo mount -t ntfs-3g /dev/mmcblk1p1 ./temp/
 ) &
 
 sleep 10s
-python3 main_FR.py > log/python_log.txt
+python3 main_FR.py --direction "in" &
+python3 main_FR.py --direction "out"
 
 sudo umount ./temp/
 
