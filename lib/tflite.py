@@ -38,6 +38,7 @@ def output_tensor(interpreter, i):
     output_details = interpreter.get_output_details()[i]
     output_data = np.squeeze(interpreter.tensor(output_details['index'])())
     if 'quantization' not in output_details:
+        print(True)
         return output_data
     scale, zero_point = output_details['quantization']
     if scale == 0:
