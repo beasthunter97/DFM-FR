@@ -52,7 +52,6 @@ def main(img_queue, temp):
     cv2.namedWindow('frame')
     cv2.moveWindow('frame', 20, 20)
     while True:
-        start_time = time.time()
         # ------------------------------------------------------------------- #
         # -------------------------CHECK TEMPERATURE------------------------- #
         if temp.value > config.oper['max_temp']:
@@ -109,7 +108,6 @@ def main(img_queue, temp):
             if key == ord('q'):
                 stop()
                 break
-        print(time.time() - start_time)
 
 
 if __name__ == "__main__":
