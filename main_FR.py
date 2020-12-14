@@ -14,7 +14,7 @@ from lib.utils import ConfigHandler, draw
 
 def parse_arg():
     ap = argparse.ArgumentParser()
-    ap.add_argument('-d', '--direction', default='in', choices=('in', 'out'),
+    ap.add_argument('-d', '--direction', default='out', choices=('in', 'out'),
                     help='Camera tracking direction "in" or "out"')
     args = vars(ap.parse_args())
     return args['direction']
