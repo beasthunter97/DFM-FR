@@ -134,19 +134,12 @@ class Tracker:
         else:
             face_index = range(-2, 0)
         for i in face_index:
-            try:
-                self.datas.append({
-                    'timestamp': int(time.time() + 7 * 3600),
-                    'camera': obj['dir'],
-                    'name': obj['name'],
-                    'capture': image_encode(obj['faces'][i])
-                })
-            except IndexError:
-                print(i)
-                print(face_index)
-                print(len(obj['faces']))
-                print(obj['appear'])
-                raise IndexError
+            self.datas.append({
+                'timestamp': int(time.time() + 7 * 3600),
+                'camera': obj['dir'],
+                'name': obj['name'],
+                'capture': image_encode(obj['faces'][i])
+            })
 
     def get_true_names(self, preds):
         conf = max(preds.values())
