@@ -95,15 +95,16 @@ class Tracker:
                     self.new_obj[new]['pred'][name] += self.obj[old]['pred'][name]
                 else:
                     self.new_obj[new]['pred'][name] = self.obj[old]['pred'][name]
-            if self.obj[old]['appear'] % self.skip:
+            if self.obj[old]['appear'] % self.skip == 0:
                 self.new_obj[new]['faces'].extend(self.obj[old]['faces'])
+            else:
+                self.new_obj[new]['faces'] = self.obj[old]['faces']
             if len(self.obj[old]['faces']) > self.max_stack:
                 indices = list(range(self.max_stack-1)) + [-1]
                 self.new_obj[new]['faces'] = self.new_obj[new]['faces'][indices]
             self.new_obj[new]['id'] = self.obj[old]['id']
             self.new_obj[new]['name'] = self.get_true_names(self.new_obj[new]['pred'])
             self.obj[old].update(self.new_obj[new])
-            print(len(self.obj[old]['faces']), len(self.new_obj[new]['faces']))
             self.obj[old]['appear'] += 1
             self.obj[old]['disappear'] = 0
         # Existed obj is not in current frame

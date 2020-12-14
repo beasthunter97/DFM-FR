@@ -37,7 +37,7 @@ tracker:
     out: 8
 
 oper:
-  skip_frame: 4
+  skip_frame: 3
   max_temp: 60
   time_check_temp: 20
   overheated_sleep: 5
