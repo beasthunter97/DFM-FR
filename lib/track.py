@@ -98,7 +98,8 @@ class Tracker:
             if self.obj[old]['appear'] % self.skip:
                 self.new_obj[new]['faces'].extend(self.obj[old]['faces'])
             if len(self.obj[old]['faces']) > self.max_stack:
-                self.new_obj[new]['faces'] = self.new_obj[new]['faces'][:self.max_stack]
+                indices = list(range(self.max_stack-1)) + [-1]
+                self.new_obj[new]['faces'] = self.new_obj[new]['faces'][indices]
             self.new_obj[new]['id'] = self.obj[old]['id']
             self.new_obj[new]['name'] = self.get_true_names(self.new_obj[new]['pred'])
             self.obj[old].update(self.new_obj[new])
@@ -127,10 +128,10 @@ class Tracker:
             with(open('log/unknown', 'w')) as file:
                 file.write(str(self.unknown))
             self.unknown += 1
-            face_index = [0, len(obj['faces'])]
+            face_index = range(0, len(obj['faces']))
         else:
-            face_index = [-1, 0]
-        for i in range(*face_index):
+            face_index = range(-2, 0)
+        for i in face_index:
             self.datas.append({
                 'timestamp': int(time.time() + 7 * 3600),
                 'camera': obj['dir'],
