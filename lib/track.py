@@ -48,7 +48,7 @@ class Tracker:
             x1, y1, x2, y2 = boxes[i]
             pos = [(x2 + x1)//2, (y2 + y1)//2]
             self.new_obj.append({
-                'faces': [faces[i]],
+                'faces': np.array([faces[i]]),
                 'pos': pos,
                 'id': np.random.randint(100),
                 'name': self.get_true_names(preds[i]),
@@ -96,7 +96,8 @@ class Tracker:
                 else:
                     self.new_obj[new]['pred'][name] = self.obj[old]['pred'][name]
             if self.obj[old]['appear'] % self.skip == 0:
-                self.new_obj[new]['faces'].extend(self.obj[old]['faces'])
+                self.new_obj[new]['faces'] = np.append(self.new_obj[new]['faces'],
+                                                       self.obj[old]['faces'], 0)
             else:
                 self.new_obj[new]['faces'] = self.obj[old]['faces']
             if len(self.obj[old]['faces']) > self.max_stack:
