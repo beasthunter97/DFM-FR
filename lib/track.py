@@ -95,6 +95,7 @@ class Tracker:
                     self.new_obj[new]['pred'][name] += self.obj[old]['pred'][name]
                 else:
                     self.new_obj[new]['pred'][name] = self.obj[old]['pred'][name]
+            print(len(self.obj[old]['faces']), len(self.new_obj[new]['faces']))
             if self.obj[old]['appear'] % self.skip:
                 self.new_obj[new]['faces'].extend(self.obj[old]['faces'])
             if len(self.obj[old]['faces']) > self.max_stack:

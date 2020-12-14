@@ -117,7 +117,7 @@ class Recognizer:
                 # ----------------------------------------------------------------
                 output = output_tensor(self.model, 0)
                 index = np.argpartition(output, -1)[-1:]
-                print(output)
+                # print(output)
                 name = {}
                 for i in index:
                     # if output_tensor(self.model, 0)[i] < 0.9:
