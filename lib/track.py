@@ -111,6 +111,8 @@ class Tracker:
             if self.obj[old]['disappear'] > self.max_disappear:
                 if self.obj[old]['appear'] > self.min_appear:
                     self.export_obj(old)
+                else:
+                    self.obj.pop(old)
         # New obj appear
         elif new is not None:
             self.obj.append(self.new_obj[new])
