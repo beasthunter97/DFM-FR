@@ -122,7 +122,6 @@ class Tracker:
             })
 
     def export_obj(self, obj):
-        obj = self.obj.pop(old)
         self.in_out[0] += 1
         if 'UNKNOWN' == obj['name']:
             obj['name'] = '%s-%d' % (obj['name'], self.unknown)
