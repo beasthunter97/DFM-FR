@@ -115,15 +115,16 @@ class Recognizer:
                 # set_input(self.model, image)
                 self.model.invoke()
                 # ----------------------------------------------------------------
-                index = np.argpartition(output_tensor(self.model, 0), -1)[-1:]
-                print(output_tensor(self.model, 0))
+                output = output_tensor(self.model, 0)
+                index = np.argpartition(output, -1)[-1:]
+                print(output)
                 name = {}
                 for i in index:
                     # if output_tensor(self.model, 0)[i] < 0.9:
                     #     continue
                     # if i not in [2, 9, 10, 11]:
                     #     continue
-                    name.update({self.labels[i]: output_tensor(self.model, 0)[i]})
+                    name.update({self.labels[i]: output[i]})
                 if name == {}:
                     name['UNKNOWN'] = 1
                 names.append(name)
