@@ -142,6 +142,8 @@ class Tracker:
             except IndexError:
                 print(i)
                 print(face_index)
+                print(len(obj['faces']))
+                print(obj['appear'])
                 raise IndexError
 
     def get_true_names(self, preds):
