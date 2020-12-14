@@ -7,7 +7,7 @@ path:
   # detect_model: models/detection_toco_1_edgetpu(1).tflite
   # recog_model: models/mobilenet_recog_quantized_edgetpu.tflite
   # recog_model: models/model_quant_edgetpu.tflite
-  recog_model: models/model_quant_edgetpu(1).tflite
+  recog_model: models/model_quant_edgetpu.tflite
   labels: models/labels.pbtxt
 
 stream:
