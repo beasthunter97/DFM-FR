@@ -36,7 +36,7 @@ def input_tensor(interpreter):
 def output_tensor(interpreter, i):
     """Returns dequantized output tensor if quantized before."""
     output_details = interpreter.get_output_details()[i]
-    output_data = np.squeeze(interpreter.tensor(output_details['index'])())
+    output_data = np.squeeze(interpreter.tensor(output_details['index'])()).astype(int)
     if 'quantization' not in output_details:
         return output_data
     scale, zero_point = output_details['quantization']
@@ -111,13 +111,15 @@ class Recognizer:
         if self.model is not None:
             names = []
             for image in images:
+<<<<<<< HEAD
                 #set_input(self.model, (image-127.5)/128)
+=======
+>>>>>>> 5e2def2e4608a27305421f794e5b783490fdb0c1
                 set_input(self.model, image)
                 self.model.invoke()
                 # ----------------------------------------------------------------
                 output = output_tensor(self.model, 0)
                 index = np.argpartition(output, -1)[-1:]
-                print(output)
                 name = {}
                 for i in index:
                     # if output_tensor(self.model, 0)[i] < 0.9:
