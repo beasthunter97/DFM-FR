@@ -111,8 +111,8 @@ class Recognizer:
         if self.model is not None:
             names = []
             for image in images:
-                set_input(self.model, (image-127.5)/128)
-                # set_input(self.model, image)
+                #set_input(self.model, (image-127.5)/128)
+                set_input(self.model, image)
                 self.model.invoke()
                 # ----------------------------------------------------------------
                 output = output_tensor(self.model, 0)
