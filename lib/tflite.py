@@ -100,7 +100,7 @@ class Detector:
 
 
 class Recognizer:
-    def __init__(self, model_path, labels, top_k=3, threshold=0.7):
+    def __init__(self, model_path, labels, top_k=3, threshold=0.5):
         if model_path is None or labels is None:
             self.model = None
         else:
