@@ -33,10 +33,12 @@ def input_tensor(interpreter):
     return interpreter.tensor(tensor_index)()[0]
 
 
-def output_tensor(interpreter, i):
+def output_tensor(interpreter, i, job='detect'):
     """Returns dequantized output tensor if quantized before."""
     output_details = interpreter.get_output_details()[i]
-    output_data = np.squeeze(interpreter.tensor(output_details['index'])()).astype(int)
+    output_data = np.squeeze(interpreter.tensor(output_details['index'])())
+    if job == 'classify':
+        output_data = output_data.astype(int)
     if 'quantization' not in output_details:
         return output_data
     scale, zero_point = output_details['quantization']
