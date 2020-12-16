@@ -20,8 +20,12 @@ def parse_arg() -> str:
     Returns:
         `str:` direction argument
     """
+    if time.strftime('%H') < '11':
+        deff = 'in'
+    else:
+        deff = 'out'
     ap = argparse.ArgumentParser()
-    ap.add_argument('-d', '--direction', default='out', choices=('in', 'out'),
+    ap.add_argument('-d', '--direction', default=deff, choices=('in', 'out'),
                     help='Camera tracking direction "in" or "out"')
     args = vars(ap.parse_args())
     return args['direction']
