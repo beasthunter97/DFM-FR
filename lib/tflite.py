@@ -100,7 +100,7 @@ class Detector:
 
 
 class Recognizer:
-    def __init__(self, model_path, labels, top_k=3, threshold=0.5):
+    def __init__(self, model_path, labels, top_k=3, threshold=0.3):
         if model_path is None or labels is None:
             self.model = None
         else:
@@ -126,7 +126,7 @@ class Recognizer:
                         continue
                     name.update({self.labels[i]: output[i]})
                 if name == {}:
-                    name = {'UNKOWN': 1}
+                    name = {'UNKNOWN': 1}
                 names.append(name)
                 # ----------------------------------------------------------------
         else:
