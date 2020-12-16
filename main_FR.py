@@ -12,7 +12,14 @@ from lib.track import Tracker
 from lib.utils import ConfigHandler, draw
 
 
-def parse_arg():
+def parse_arg() -> str:
+    """
+    Parse command line argument. Currently there's only one argument
+    needed. So it return that specific argument.
+
+    Returns:
+        `str:` direction argument
+    """
     ap = argparse.ArgumentParser()
     ap.add_argument('-d', '--direction', default='out', choices=('in', 'out'),
                     help='Camera tracking direction "in" or "out"')
@@ -20,7 +27,10 @@ def parse_arg():
     return args['direction']
 
 
-def init_constant():
+def init_constant() -> None:
+    """
+    Initialize important/constant objects for the main process.
+    """
     global config, src, stream, detector, recognizer, tracker
 
     if config.source['src'] == 'cam':
@@ -39,7 +49,15 @@ def init_constant():
     tracker = Tracker(config)
 
 
-def main(img_queue, temp):
+def main(img_queue: Queue, temp: c_uint8) -> None:
+    """
+    <h1>Main process</h1>. Included tasks: stream reading, face detect, face track, face
+    recognize, put data to Server process, show frameimport matplotlib.pyplot as plt.
+
+    Args:
+        `img_queue` (`Queue`): Image queue to communicate with Server process
+        `temp` (`c_uint8`): Temperature variable to communicate with Temp process
+    """
     def stop():
         temp.value = 0
         stream.stop()
