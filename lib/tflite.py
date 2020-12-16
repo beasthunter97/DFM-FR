@@ -116,7 +116,7 @@ class Recognizer:
                 set_input(self.model, image)
                 self.model.invoke()
                 # ----------------------------------------------------------------
-                output = output_tensor(self.model, 0)
+                output = output_tensor(self.model, 0, job='classify')
                 index = np.argpartition(output, -1)[-1:]
                 name = {}
                 for i in index:
