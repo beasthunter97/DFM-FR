@@ -111,10 +111,6 @@ class Recognizer:
         if self.model is not None:
             names = []
             for image in images:
-<<<<<<< HEAD
-                #set_input(self.model, (image-127.5)/128)
-=======
->>>>>>> 5e2def2e4608a27305421f794e5b783490fdb0c1
                 set_input(self.model, image)
                 self.model.invoke()
                 # ----------------------------------------------------------------
