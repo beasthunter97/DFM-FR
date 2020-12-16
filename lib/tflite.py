@@ -100,7 +100,7 @@ class Detector:
 
 
 class Recognizer:
-    def __init__(self, model_path, labels):
+    def __init__(self, model_path, labels, top_k=3, threshold=0.7):
         if model_path is None or labels is None:
             self.model = None
         else:
@@ -108,6 +108,8 @@ class Recognizer:
                 self.labels = file.read().split('\n')
             self.model = make_interpreter(model_path)
             self.model.allocate_tensors()
+            self.top_k = top_k
+            self.threshold = threshold
 
     def recognize(self, images):
         if self.model is not None:
@@ -117,16 +119,14 @@ class Recognizer:
                 self.model.invoke()
                 # ----------------------------------------------------------------
                 output = output_tensor(self.model, 0, job='classify')
-                index = np.argpartition(output, -1)[-1:]
+                index = np.argpartition(output, -3)[-3:]
                 name = {}
                 for i in index:
-                    # if output_tensor(self.model, 0)[i] < 0.9:
-                    #     continue
-                    # if i not in [2, 9, 10, 11]:
-                    #     continue
+                    if output[i] < self.threshold:
+                        continue
                     name.update({self.labels[i]: output[i]})
                 if name == {}:
-                    name['UNKNOWN'] = 1
+                    name = {'UNKOWN': 1}
                 names.append(name)
                 # ----------------------------------------------------------------
         else:
