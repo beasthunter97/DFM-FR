@@ -62,7 +62,7 @@ def fix_box(x1, y1, x2, y2):
 
 
 class Detector:
-    def __init__(self, model_path, min_face_size=0, threshold=0.3, face_size=112):
+    def __init__(self, model_path, min_face_size, threshold, face_size):
         self.model = make_interpreter(model_path)
         self.model.allocate_tensors()
         self.min_face_size = min_face_size
@@ -100,7 +100,7 @@ class Detector:
 
 
 class Recognizer:
-    def __init__(self, model_path, labels, top_k=3, threshold=0.3):
+    def __init__(self, model_path, labels, top_k, threshold):
         if model_path is None or labels is None:
             self.model = None
         else:

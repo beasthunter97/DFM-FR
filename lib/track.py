@@ -12,16 +12,16 @@ def image_encode(img):
 
 
 class Tracker:
-    def __init__(self, config):
-        direction = config.source['direction']
+    def __init__(self, direction, min_dist, min_appear, max_disappear,
+                 max_img_stack, skip_frame):
         self.dir = direction.capitalize()
-        self.min_dist = config.tracker['min_dist'][direction]
-        self.min_appear = config.tracker['min_appear'][direction]
-        self.max_disappear = config.tracker['max_disappear'][direction]
+        self.min_dist = min_dist
+        self.min_appear = min_appear
+        self.max_disappear = max_disappear
         self.obj = []
         self.in_out = [0]
-        self.max_stack = config.oper['max_img_stack']
-        self.skip = config.oper['skip_frame']
+        self.max_stack = max_img_stack
+        self.skip = skip_frame
         try:
             with open('log/unknown', 'r') as file:
                 self.unknown = int(file.read())

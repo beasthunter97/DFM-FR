@@ -95,3 +95,30 @@ def get_size(obj, seen=None):
     elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes, bytearray)):
         size += sum([get_size(i, seen) for i in obj])
     return size
+
+
+def save(data):
+    file_name = name_gen(16)
+    with open(file_name, 'w') as file:
+        file.write(str(data))
+
+
+def load():
+    retval = None
+    for root, dirs, files in os.walk('temp/'):
+        if files == []:
+            break
+        files.sort()
+        for file in files:
+            file = '/'.join((root, file))
+            try:
+                with open(file, 'r') as f:
+                    data = f.read()
+                    retval = eval(data)
+                os.remove(file)
+                break
+            except: # noqa
+                os.remove(file)
+                continue
+        break
+    return retval
