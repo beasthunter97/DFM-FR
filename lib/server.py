@@ -57,7 +57,7 @@ def temp_check(temp, config):
             "status": 1,
         }
         try:
-            response = requests.post(config.url['status'], data=data, verify=False)
+            response = requests.post(config.url['status'], json=data, verify=False)
             if response.status_code == 200:
                 if temp.value > config.oper['max_temp']:
                     device_status = 'Overheated (%d)' % temp.value
