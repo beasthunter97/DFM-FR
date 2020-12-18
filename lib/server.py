@@ -24,7 +24,7 @@ def server_send(data_queue, config):
                 continue
         server_time = time.time()
         try:
-            response = requests.post(config.url['capture'], data=data, verify=False)
+            response = requests.post(config.url['capture'], json=data, verify=False)
             if response.status_code == 200:
                 server_status = 'Success'
             else:
