@@ -5,7 +5,7 @@ from subprocess import PIPE, Popen
 import requests
 from requests import ConnectionError
 
-from lib.utils import random_name
+from lib.utils import name_gen
 
 
 def server_send(data_queue, config):
@@ -77,7 +77,7 @@ def temp_check(temp, config):
 
 def save(data, queue, max_face=10):
     if isinstance(data, list):
-        file_name = random_name(16)
+        file_name = name_gen(16)
         with open(file_name, 'w') as file:
             file.write(str(data))
     else:
@@ -92,7 +92,8 @@ def load():
     for root, dirs, files in os.walk('temp/'):
         if files == []:
             break
-        for file in files:
+
+        for file in files.sort():
             file = '/'.join((root, file))
             try:
                 with open(file, 'r') as f:

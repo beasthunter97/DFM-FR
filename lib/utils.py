@@ -2,6 +2,7 @@ import os
 import random
 import string
 import sys
+import time
 
 import cv2
 import yaml
@@ -57,15 +58,24 @@ def draw(image, boxes, names, in_out=None):
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
 
-def random_name(length=16, root='temp/', ext=''):
+def name_gen(length=16, root='temp/', ext='', rand=False):
     os.makedirs(root, exist_ok=True)
     character = string.ascii_letters + string.digits
     while True:
-        file_name = root + ''.join(random.choice(character) for _ in range(length)) + ext
-        if os.path.exists(file_name):
-            continue
+        if rand:
+            file_name = root + \
+                ''.join(random.choice(character) for _ in range(length))
+        else:
+            i = 0
+            file_name = root + str(time.time())
+        if os.path.exists(file_name + ext):
+            if rand:
+                continue
+            else:
+                while os.path.exists(file_name + '_%d' % i + ext):
+                    i += 1
         break
-    return file_name
+    return file_name + ext
 
 
 def get_size(obj, seen=None):
