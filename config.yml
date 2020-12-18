@@ -40,5 +40,4 @@ oper:
   time_check_temp: 20
   overheated_sleep: 5
   display: 1
-  max_item: 10
   max_img_stack: 10

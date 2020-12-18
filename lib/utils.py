@@ -67,7 +67,7 @@ def name_gen(length=16, root='temp/', ext='', rand=False):
                 ''.join(random.choice(character) for _ in range(length))
         else:
             i = 0
-            file_name = root + str(time.time())
+            file_name = root + str(int(time.time()))
         if os.path.exists(file_name + ext):
             if rand:
                 continue

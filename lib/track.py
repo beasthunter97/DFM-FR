@@ -32,7 +32,7 @@ class Tracker:
 
     def track(self, boxes, preds, faces):
         self.new_obj = []
-        self.datas = []
+        self.data = {}
         self.create_obj(boxes, preds, faces)
         self.update()
         # ------------------------------------------------------------------------ #
@@ -41,7 +41,7 @@ class Tracker:
         # for obj in self.new_obj:
         #     obj['name'] = obj['id']
         # ------------------------------------------------------------------------ #
-        return self.new_obj, self.datas, self.in_out
+        return self.new_obj, self.data, self.in_out
 
     def create_obj(self, boxes, preds, faces):
         for i in range(len(boxes)):
@@ -134,13 +134,12 @@ class Tracker:
             face_index = range(0, len(obj['faces']))
         else:
             face_index = range(-1, 0)
-        for i in face_index:
-            self.datas.append({
-                'timestamp': int(time.time() + 7 * 3600),
-                'camera': obj['dir'],
-                'name': obj['name'],
-                'capture': image_encode(obj['faces'][i])
-            })
+        self.data = {
+            'timestamp': int(time.time() + 7 * 3600),
+            'camera': obj['dir'],
+            'name': obj['name'],
+            'capture': [image_encode(obj['faces'][i]) for i in face_index]
+        }
 
     def get_true_names(self, preds):
         conf = max(preds.values())

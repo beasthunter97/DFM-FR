@@ -18,18 +18,13 @@ def server_send(data_queue, config):
                     break
                 continue
         else:
-            data = []
-            if data_queue.qsize() < config.oper['max_item']:
-                time.sleep(0.5)
-            for _ in range(int(min(data_queue.qsize(), config.oper['max_item']))):
-                dat = data_queue.get()
-                if dat == 'stop':
-                    stop = True
-                    continue
-                data.append(dat)
+            data = data_queue.get()
+            if data == 'stop':
+                stop = True
+                continue
         server_time = time.time()
         try:
-            response = requests.post(config.url['capture'], json=data, verify=False)
+            response = requests.post(config.url['capture'], data=data, verify=False)
             if response.status_code == 200:
                 server_status = 'Success'
             else:
@@ -75,16 +70,10 @@ def temp_check(temp, config):
         print('[DEVICE] Status: ', device_status)
 
 
-def save(data, queue, max_face=10):
-    if isinstance(data, list):
-        file_name = name_gen(16)
-        with open(file_name, 'w') as file:
-            file.write(str(data))
-    else:
-        data = [data]
-        for _ in range(max_face):
-            data.append(queue.get())
-        save(data)
+def save(data):
+    file_name = name_gen(16)
+    with open(file_name, 'w') as file:
+        file.write(str(data))
 
 
 def load():
@@ -92,8 +81,8 @@ def load():
     for root, dirs, files in os.walk('temp/'):
         if files == []:
             break
-
-        for file in files.sort():
+        files.sort()
+        for file in files:
             file = '/'.join((root, file))
             try:
                 with open(file, 'r') as f:

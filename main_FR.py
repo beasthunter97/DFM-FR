@@ -91,7 +91,7 @@ def main(data_queue: 'Queue', temp: 'c_uint8') -> None:
         # -------------------------------TRACK------------------------------- #
         boxes, faces = detector.detect(frame, True)
         preds = recognizer.recognize(faces)
-        objs, datas, in_out = tracker.track(boxes, preds, faces)
+        objs, data, in_out = tracker.track(boxes, preds, faces)
         names = []
         boxes = []
         for obj in objs:
@@ -105,11 +105,11 @@ def main(data_queue: 'Queue', temp: 'c_uint8') -> None:
             ])
         # ------------------------------------------------------------------- #
         # -----------------------------SEND-DATA----------------------------- #
-        for data in datas:
+        if data != {}:
             with open('log/time_log.txt', 'a') as file:
                 file.write(time.strftime('%H:%M\n'))
             if data_queue.qsize() >= 120:
-                save(data, data_queue)
+                save(data)
             else:
                 data_queue.put(data)
         # ------------------------------------------------------------------- #
