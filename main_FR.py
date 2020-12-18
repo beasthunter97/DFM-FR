@@ -108,7 +108,8 @@ def main_process(data_queue: 'Queue', temp: 'c_uint8') -> None:
         """
         global src, stream, detector, recognizer, tracker
         direction = config.direction
-        tracking = config.tracking[direction]
+        tracking = config.tracking['shared']
+        tracking.update(config.tracking[direction])
         src = config.source[direction]
         if config.source['type'] == 'cam':
             VS = WebcamVideoStream

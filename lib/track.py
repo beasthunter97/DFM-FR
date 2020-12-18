@@ -13,7 +13,7 @@ def image_encode(img):
 
 class Tracker:
     def __init__(self, direction, min_dist, min_appear, max_disappear,
-                 max_img_stack, skip_frame):
+                 max_img_stack, skip_frame, max_send):
         self.dir = direction.capitalize()
         self.min_dist = min_dist
         self.min_appear = min_appear
@@ -22,6 +22,7 @@ class Tracker:
         self.in_out = [0]
         self.max_stack = max_img_stack
         self.skip = skip_frame
+        self.max_send = max_send
         try:
             with open('log/unknown', 'r') as file:
                 self.unknown = int(file.read())
@@ -131,14 +132,15 @@ class Tracker:
             with(open('log/unknown', 'w')) as file:
                 file.write(str(self.unknown))
             self.unknown += 1
-            face_index = range(0, len(obj['faces']))
+            index = range(0, -self.max_send, -1)
+            capture = [image_encode(obj['faces'][i] for i in index)]
         else:
-            face_index = range(-1, 0)
+            capture = [image_encode(obj['faces'][-1])]
         self.data = {
             'timestamp': int(time.time() + 7 * 3600),
             'camera': obj['dir'],
             'name': obj['name'],
-            'capture': [image_encode(obj['faces'][i]) for i in face_index]
+            'capture': capture
         }
 
     def get_true_names(self, preds):

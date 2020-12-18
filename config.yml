@@ -31,15 +31,15 @@ temp:
   url: http://htv.ai.dfm-engineering.com/api/v1/admin/public/device-info
 
 tracking:
+  shared:
+    max_img_stack: 10
+    skip_frame: 3
+    max_send: 5
   in:
     min_dist: 10
     min_appear: 3
     max_disappear: 8
-    max_img_stack: 10
-    skip_frame: 3
   out:
     min_dist: 10
     min_appear: 3
     max_disappear: 8
-    max_img_stack: 10
-    skip_frame: 3
