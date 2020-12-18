@@ -1,4 +1,9 @@
-import argparse
+"""
+This file is execute by the ``boot_script.sh``.
+
+It contains code of the ``Main`` process, constants and shared variables
+for the processes.
+"""
 import time
 from ctypes import c_uint8
 from multiprocessing import Process, Queue, Value
@@ -12,24 +17,9 @@ from lib.track import Tracker
 from lib.utils import ConfigHandler, draw
 
 
-def parse_arg() -> str:
-    """
-    Parse command line argument. Currently there's only one argument
-    needed. So it return that specific argument.
-
-    Returns:
-        `str:` direction argument
-    """
-    ap = argparse.ArgumentParser()
-    ap.add_argument('-d', '--direction', default='out', choices=('in', 'out'),
-                    help='Camera tracking direction "in" or "out"')
-    args = vars(ap.parse_args())
-    return args['direction']
-
-
 def init_constant() -> None:
     """
-    Initialize important/constant objects for the main process.
+    Initialize constants and objects for the main process.
     """
     global config, src, stream, detector, recognizer, tracker
 
@@ -49,19 +39,26 @@ def init_constant() -> None:
     tracker = Tracker(config)
 
 
-def main(img_queue: Queue, temp: c_uint8) -> None:
+def main(data_queue: 'Queue', temp: 'c_uint8') -> None:
     """
-    <h1>Main process</h1>. Included tasks: stream reading, face detect, face track, face
-    recognize, put data to Server process, show frameimport matplotlib.pyplot as plt.
+    ``Main`` process.
+    Performs `detection`, `recognition` and `tracking` from video stream and send
+    infomation to ``Server`` process.
 
     Args:
-        `img_queue` (`Queue`): Image queue to communicate with Server process
-        `temp` (`c_uint8`): Temperature variable to communicate with Temp process
+        data_queue (Queue): Shared variable with ``Server`` process. The ``Main``
+                            process put data to it and the ``Server`` process will
+                            send receive it and send it to `DFM Server`
+        temp (c_uint8): Shared variable with ``Temp`` process. The ``Main`` process
+                        read device's temperature from this variable.
     """
-    def stop():
+    def stop() -> None:
+        """
+        Necessary procedure to stop the program.
+        """
         temp.value = 0
         stream.stop()
-        img_queue.put('stop')
+        data_queue.put('stop')
 
     init_constant()
     counter = 0
@@ -111,10 +108,10 @@ def main(img_queue: Queue, temp: c_uint8) -> None:
         for data in datas:
             with open('log/time_log.txt', 'a') as file:
                 file.write(time.strftime('%H:%M\n'))
-            if img_queue.qsize() >= 120:
-                save(data, img_queue)
+            if data_queue.qsize() >= 120:
+                save(data, data_queue)
             else:
-                img_queue.put(data)
+                data_queue.put(data)
         # ------------------------------------------------------------------- #
         # ------------------------------DISPLAY------------------------------ #
         if config.oper['display']:
@@ -129,16 +126,14 @@ def main(img_queue: Queue, temp: c_uint8) -> None:
 
 
 if __name__ == "__main__":
-    direction = parse_arg()
     config = ConfigHandler().read()
-    config.source['direction'] = direction
-    img_queue = Queue(maxsize=128)
+    data_queue = Queue(maxsize=128)
     temp = Value(c_uint8)
     temp.value = 1
     main_process = Process(target=main,
-                           args=(img_queue, temp,), name='Main')
+                           args=(data_queue, temp,), name='Main')
     server_process = Process(target=server_send,
-                             args=(img_queue, config,), name='Server')
+                             args=(data_queue, config,), name='Server')
     temp_process = Process(target=temp_check,
                            args=(temp, config), name='Temp')
     temp_process.start()

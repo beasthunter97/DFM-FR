@@ -1,4 +1,5 @@
 source:
+  direction: in
   src: cam
   vid_path: test/test.m4v
 

@@ -133,7 +133,7 @@ class Tracker:
             self.unknown += 1
             face_index = range(0, len(obj['faces']))
         else:
-            face_index = range(-2, 0)
+            face_index = range(-1, 0)
         for i in face_index:
             self.datas.append({
                 'timestamp': int(time.time() + 7 * 3600),

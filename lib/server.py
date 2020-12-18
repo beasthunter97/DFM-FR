@@ -8,10 +8,10 @@ from requests import ConnectionError
 from lib.utils import random_name
 
 
-def server_send(img_queue, config):
+def server_send(data_queue, config):
     stop = False
     while True:
-        if img_queue.empty():
+        if data_queue.empty():
             data = load()
             if data is None:
                 if stop:
@@ -19,10 +19,10 @@ def server_send(img_queue, config):
                 continue
         else:
             data = []
-            if img_queue.qsize() < config.oper['max_item']:
+            if data_queue.qsize() < config.oper['max_item']:
                 time.sleep(0.5)
-            for _ in range(int(min(img_queue.qsize(), config.oper['max_item']))):
-                dat = img_queue.get()
+            for _ in range(int(min(data_queue.qsize(), config.oper['max_item']))):
+                dat = data_queue.get()
                 if dat == 'stop':
                     stop = True
                     continue
@@ -75,16 +75,15 @@ def temp_check(temp, config):
         print('[DEVICE] Status: ', device_status)
 
 
-def save(data: any):
-    global config, img_queue
+def save(data, queue, max_face=10):
     if isinstance(data, list):
         file_name = random_name(16)
         with open(file_name, 'w') as file:
             file.write(str(data))
     else:
         data = [data]
-        for _ in range(config.oper['max_face']):
-            data.append(img_queue.get())
+        for _ in range(max_face):
+            data.append(queue.get())
         save(data)
 
 
