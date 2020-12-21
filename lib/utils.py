@@ -178,7 +178,7 @@ def load():
     Randomly load data from ``temp/`` folder
 
     Returns:
-        Any: Data from file in ``temp``folder.
+        Any: Data from file in ``temp`` folder.
     """
     retval = None
     for root, dirs, files in os.walk('temp/'):
