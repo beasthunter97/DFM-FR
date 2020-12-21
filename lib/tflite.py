@@ -2,7 +2,8 @@
 This file contains `classes` and `methods` for ``tflite`` models.
 Modyfied from google's ``PyCoral API``. See PyCoral API for more details.
 https://github.com/google-coral/pycoral/blob/master/pycoral/adapters/common.py
-> `Note: there can be major differences due to version change.`
+
+`Note: there can be major differences due to version change.`
 """
 import cv2
 import numpy as np
@@ -83,7 +84,7 @@ def output_tensor(interpreter: tflite.Interpreter, i: int, to_int=False) -> np.n
         i (int): Index of the output desired.
         to_int (str, optional): If set to true, output will be converted to ``int`` type.
                                 This is required if the model's output is quantized and
-                                output + zero_point > 255. Defaults to True.
+                                output + zero_point > 255. Defaults to ``True``.
 
     Returns:
         np.ndarray: dequantized output if quantized before.
@@ -139,8 +140,8 @@ class Detector:
         Args:
             model_path (str): Path to tflite detection model.
             min_face_size (int): Minimum face size to detect.
-            threshold (float, optional): Threshold. Defaults to 0.3.
-            face_size (int, optional): Size of output face. Defaults to 96.
+            threshold (float, optional): Threshold. Defaults to ``0.3``.
+            face_size (int, optional): Size of output face. Defaults to ``96``.
         """
         self.model = make_interpreter(model_path)
         self.min_face_size = min_face_size
@@ -157,7 +158,7 @@ class Detector:
         Args:
             image (np.ndarray): Original image.
             return_faces (bool, optional): If set to True, resized faces is returned.
-                                           Defaults to False.
+                                           Defaults to ``False``.
 
         Returns:
             tuple or list: A list of bounding box [x1, y1, x2, y2]. If return_faces is
@@ -202,8 +203,8 @@ class Recognizer:
         Args:
             model_path (str): Path to tflite face recognize model.
             labels (str): Path to label file.
-            top_k (int, optional): Top k highest probability. Defaults to 3.
-            threshold (float, optional): Threshold. Defaults to 0.5.
+            top_k (int, optional): Top k highest probability. Defaults to ``3``.
+            threshold (float, optional): Threshold. Defaults to ``0.5``.
         """
         if model_path is None or labels is None:
             self.model = None

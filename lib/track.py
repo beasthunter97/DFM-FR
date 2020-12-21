@@ -143,21 +143,22 @@ class Tracker:
     def update_obj(self, new=None, old=None):
         """
         Update a specific object.
-        > If both ``new`` and ``old`` is `not` ``None``. The new object is updated
-        > to be the new status of the corresponding old object.
 
-        > If ``new`` is `not` ``None`` and ``old`` is ``None``. The new object is
-        > assigned as a additional current object.
+        * If both ``new`` and ``old`` is `not` ``None``. The new object is updated\
+        to be the new status of the corresponding old object.
 
-        > If ``new`` is ``None`` and ``old`` is `not` ``None``. The old object is
-        > assumed disappeared. If the old object disappeared for too many frames, it
-        > will be exported.
+        * If ``new`` is `not` ``None`` and ``old`` is ``None``. The new object is\
+        assigned as a additional current object.
+
+        * If ``new`` is ``None`` and ``old`` is `not` ``None``. The old object is\
+        assumed disappeared. If the old object disappeared for too many frames, it\
+        will be exported.
 
         Args:
             new (list, optional): Index list of new object need to be updated.
-                                  Defaults to None.
+                                  Defaults to ``None``.
             old (list, optional): Index list of current object need to be updated.
-                                  Defaults to None.
+                                  Defaults to ``None``.
         """
         # New obj and old obj is the same obj
         if old is not None and new is not None:

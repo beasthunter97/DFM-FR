@@ -5,16 +5,30 @@ import sys
 import time
 
 import cv2
+import numpy as np
 import yaml
 
 
 class ConfigHandler:
     """
-    Config Handler class.
+    Configuration Handler class.
 
-    Read & write config file.
+    Read & write configuration file.
     """
     def read(self, file_path='config.yml', keywords=[]):
+        """
+        Read configuration.
+
+        Args:
+            file_path (str, optional): Path to configuration file. Defaults to
+                                       ``config.yml``.
+            keywords (list, optional): Keywords to read from configuration file. Defaults
+                                       to ``[]``.
+
+        Returns:
+            Any: Value of correspoding keywords read from configuration file. If keywords
+                 is ``[]``, return everything.
+        """
         self.file_path = file_path
         if not hasattr(self, 'config'):
             with open(self.file_path, 'r') as file:
@@ -37,6 +51,12 @@ class ConfigHandler:
             return self
 
     def write(self, file_path=None):
+        """
+        Write configuration from the class attribute.
+
+        Args:
+            file_path (str, optional): Path to configuration file. Defaults to ``None``.
+        """
         if file_path is None:
             file_path = self.file_path
         data = {}
@@ -45,12 +65,28 @@ class ConfigHandler:
         write_yaml(file_path, data)
 
 
-def write_yaml(file_path, data):
+def write_yaml(file_path: str, data: 'any'):
+    """
+    Write yaml file.
+
+    Args:
+        file_path (str): Path to yaml file.
+        data (Any): Data to be writen
+    """
     with open(file_path, 'w') as file:
         yaml.dump(data, file)
 
 
-def draw(image, boxes, names, in_out=None):
+def draw(image: np.ndarray, boxes: list, names: list, in_out=None):
+    """
+    Draw bounding boxes and names on frame.
+
+    Args:
+        image (np.ndarray): Frame to be drawn.
+        boxes (list): Face bounding boxes.
+        names (list): List of names.
+        in_out (list, optional): List of in-out counting. Defaults to ``None``.
+    """
     for name, (x1, y1, x2, y2) in zip(names, boxes):
         cv2.rectangle(image, (x1, y1), (x2, y2),
                       (0, 255, 0), 2)
@@ -63,7 +99,20 @@ def draw(image, boxes, names, in_out=None):
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
 
-def name_gen(length=16, root='temp/', ext='', rand=False):
+def name_gen(length=16, root='temp/', ext='', rand=False) -> str:
+    """
+    Generate name for file.
+
+    Args:
+        length (int, optional): Length of name. Defaults to ``16``.
+        root (str, optional): Root folder of file. Defaults to ``temp/``.
+        ext (str, optional): File extension. Defaults to ``''``.
+        rand (bool, optional): Either random name of time based name. Defaults to
+                               ``False``.
+
+    Returns:
+        str: File name with root folder and extension.
+    """
     os.makedirs(root, exist_ok=True)
     character = string.ascii_letters + string.digits
     while True:
@@ -89,7 +138,8 @@ def get_size(obj, seen=None) -> int:
 
     Args:
         obj ([type]): Input object.
-        seen ([type], optional): Size of the object is counted or not. Defaults to None.
+        seen ([type], optional): Size of the object is counted or not. Defaults to
+                                 ``None``.
 
     Returns:
         int: Size of the input object.
@@ -111,13 +161,25 @@ def get_size(obj, seen=None) -> int:
     return size
 
 
-def save(data):
+def save(data: dict):
+    """
+    Temporarily save the data to file in ``temp/`` folder.
+
+    Args:
+        data (dict): Data to be saved.
+    """
     file_name = name_gen(16)
     with open(file_name, 'w') as file:
         file.write(str(data))
 
 
 def load():
+    """
+    Randomly load data from ``temp/`` folder
+
+    Returns:
+        Any: Data from file in ``temp``folder.
+    """
     retval = None
     for root, dirs, files in os.walk('temp/'):
         if files == []:
