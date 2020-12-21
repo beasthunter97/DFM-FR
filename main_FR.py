@@ -22,7 +22,6 @@ from lib.utils import ConfigHandler, draw, load, save
 def server_process(data_queue: Queue):
     """
     ``Server`` process.
-    ===================
 
     Send data received from ``Main`` process to `DFM server`.
 
@@ -65,7 +64,6 @@ def server_process(data_queue: Queue):
 def temp_process(temp: c_uint8):
     """
     ``Temp`` process.
-    =================
 
     Check device's temperature and return the value to ``Main`` process.
 
@@ -105,7 +103,6 @@ def temp_process(temp: c_uint8):
 def main_process(data_queue: 'Queue', temp: 'c_uint8'):
     """
     ``Main`` process.
-    =================
 
     Performs `detection`, `recognition` and `tracking` from video stream and send
     infomation to ``Server`` process.

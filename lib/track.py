@@ -23,7 +23,6 @@ def image_encode(img: np.ndarray) -> str:
 class Tracker:
     """
     Face tracking class.
-    ====================
 
     Track, count and stack identities.
     """
@@ -209,7 +208,7 @@ class Tracker:
             with(open('log/unknown', 'w')) as file:
                 file.write(str(self.unknown))
             self.unknown += 1
-            index = range(0, -max(self.max_send, len(obj['faces'])), -1)
+            index = range(0, -min(self.max_send, len(obj['faces'])), -1)
             capture = [image_encode(obj['faces'][i]) for i in index]
         else:
             capture = [image_encode(obj['faces'][-1])]

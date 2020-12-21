@@ -11,7 +11,6 @@ import yaml
 class ConfigHandler:
     """
     Config Handler class.
-    =====================
 
     Read & write config file.
     """

@@ -129,7 +129,6 @@ def fix_box(x1: int, y1: int, x2: int, y2: int) -> tuple:
 class Detector:
     """
     Face detector class.
-    ====================
 
     Simplify the PyCoral API detection model syntax.
     """
@@ -193,7 +192,6 @@ class Detector:
 class Recognizer:
     """
     Face detector class.
-    ====================
 
     Simplify the PyCoral API classification model syntax.
     """
