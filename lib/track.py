@@ -133,6 +133,7 @@ class Tracker:
                 file.write(str(self.unknown))
             self.unknown += 1
             index = range(0, -self.max_send, -1)
+            print(len(obj['faces'], index))
             capture = [image_encode(obj['faces'][i] for i in index)]
         else:
             capture = [image_encode(obj['faces'][-1])]
