@@ -68,7 +68,7 @@ class Tracker:
             faces (list): Face images.
 
         Returns:
-            tuple: tuple of current frame's `face infomation`, `exported data`,
+            tuple: tuple of current frame's `face infomation`, `exported data`,\
                    and ``in_out`` `count number`.
         """
         self.new_obj = []

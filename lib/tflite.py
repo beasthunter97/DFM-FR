@@ -161,7 +161,7 @@ class Detector:
                                            Defaults to ``False``.
 
         Returns:
-            tuple or list: A list of bounding box [x1, y1, x2, y2]. If return_faces is
+            tuple or list: A list of bounding box [x1, y1, x2, y2]. If return_faces is\
                            True, return a tuple of bounding box list and face list.
         """
         h, w = image.shape[:2]
@@ -223,7 +223,7 @@ class Recognizer:
             images (list): List of input images to recoginize.
 
         Returns:
-            list: List of dictionaries of ``name: prob`` with maximum of ``k`` items.
+            list: List of dictionaries of ``name: prob`` with maximum of ``k`` items.\
                   Number of dictionaries equal to number of input images
         """
         if self.model is not None:

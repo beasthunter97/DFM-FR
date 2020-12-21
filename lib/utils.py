@@ -26,7 +26,7 @@ class ConfigHandler:
                                        to ``[]``.
 
         Returns:
-            Any: Value of correspoding keywords read from configuration file. If keywords
+            Any: Value of correspoding keywords read from configuration file. If keywords\
                  is ``[]``, return everything.
         """
         self.file_path = file_path
