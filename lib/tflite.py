@@ -1,3 +1,9 @@
+"""
+This file contains `classes` and `methods` for ``tflite`` models.
+Modyfied from google's ``PyCoral API``. See PyCoral API for more details.
+https://github.com/google-coral/pycoral/blob/master/pycoral/adapters/common.py
+> `Note: there can be major differences due to version change.`
+"""
 import cv2
 import numpy as np
 import tflite_runtime.interpreter as tflite
@@ -5,39 +11,86 @@ import tflite_runtime.interpreter as tflite
 EDGETPU_SHARED_LIB = 'libedgetpu.so.1'
 
 
-def make_interpreter(model_file):
+def make_interpreter(model_file: str) -> tflite.Interpreter:
+    """
+    Make tflite interpreter.
+
+    Args:
+        model_file (str): Path to tflite model file.
+
+    Returns:
+        tflite.Interpreter: Allocated interpreter.
+    """
     model_file, *device = model_file.split('@')
-    return tflite.Interpreter(
+    interpreter = tflite.Interpreter(
         model_path=model_file,
         experimental_delegates=[
             tflite.load_delegate(EDGETPU_SHARED_LIB,
                                  {'device': device[0]} if device else {})
         ]
     )
+    interpreter.allocate_tensors()
+    return interpreter
 
 
-def set_input(interpreter, image):
-    """Copies data to input tensor."""
+def set_input(interpreter: tflite.Interpreter, image: np.ndarray):
+    """
+    Set image as the tflte interpreter's input.
+
+    Args:
+        interpreter (tflite.Interpreter): Tflite interpreter
+        image (np.ndarray): Input image with shape (W, H, C), color channel's order
+                            depends on the model.
+    """
     input_tensor(interpreter)[:, :] = image
 
 
-def input_image_size(interpreter):
-    """Returns input image size as (width, height, channels) tuple."""
+def input_image_size(interpreter: tflite.Interpreter) -> tuple:
+    """
+    Check input image's size required by the interpreter
+
+    Args:
+        interpreter (tflite.Interpreter): Tflite interpreter.
+
+    Returns:
+        tuple: (w, h, c).
+    """
     _, height, width, channels = interpreter.get_input_details()[0]['shape']
     return width, height, channels
 
 
-def input_tensor(interpreter):
-    """Returns input tensor view as numpy array of shape (height, width, 3)."""
+def input_tensor(interpreter: tflite.Interpreter) -> np.ndarray:
+    """
+    Returns input tensor view as numpy ``array`` of shape (height, width, channel).
+
+    Args:
+        interpreter (tflite.Interpreter): Tflite interpreter.
+
+    Returns:
+        np.ndarray: Numpy ``array`` of shape (h, w, c).
+    """
     tensor_index = interpreter.get_input_details()[0]['index']
     return interpreter.tensor(tensor_index)()[0]
 
 
-def output_tensor(interpreter, i, job='detect'):
-    """Returns dequantized output tensor if quantized before."""
+def output_tensor(interpreter: tflite.Interpreter, i: int, to_int=False) -> np.ndarray:
+    """
+    Returns dequantized output tensor if quantized before.
+    `Important change is made to avoid numerical error from google's original API.`
+
+    Args:
+        interpreter (tflite.Interpreter): Tflite interpreter.
+        i (int): Index of the output desired.
+        to_int (str, optional): If set to true, output will be converted to ``int`` type.
+                                This is required if the model's output is quantized and
+                                output + zero_point > 255. Defaults to True.
+
+    Returns:
+        np.ndarray: dequantized output if quantized before.
+    """
     output_details = interpreter.get_output_details()[i]
     output_data = np.squeeze(interpreter.tensor(output_details['index'])())
-    if job == 'classify':
+    if to_int:
         output_data = output_data.astype(int)
     if 'quantization' not in output_details:
         return output_data
@@ -47,7 +100,19 @@ def output_tensor(interpreter, i, job='detect'):
     return scale * (output_data - zero_point)
 
 
-def fix_box(x1, y1, x2, y2):
+def fix_box(x1: int, y1: int, x2: int, y2: int) -> tuple:
+    """
+    Fix the face detection's bounding box to a square bounding box.
+
+    Args:
+        x1 (int): Point x1.
+        y1 (int): Point y1.
+        x2 (int): Point x2.
+        y2 (int): Point y2.
+
+    Returns:
+        tuple: square box (x1, y1, x2, y2)
+    """
     w = x2 - x1
     h = y2 - y1
     if h < w:
@@ -62,9 +127,23 @@ def fix_box(x1, y1, x2, y2):
 
 
 class Detector:
-    def __init__(self, model_path, min_face_size, threshold, face_size):
+    """
+    Face detector class.
+    ====================
+
+    Simplify the PyCoral API detection model syntax.
+    """
+    def __init__(self, model_path: str, min_face_size: int, threshold=0.3, face_size=96):
+        """
+        Class initialize.
+
+        Args:
+            model_path (str): Path to tflite detection model.
+            min_face_size (int): Minimum face size to detect.
+            threshold (float, optional): Threshold. Defaults to 0.3.
+            face_size (int, optional): Size of output face. Defaults to 96.
+        """
         self.model = make_interpreter(model_path)
-        self.model.allocate_tensors()
         self.min_face_size = min_face_size
         self.threshold = threshold
         if isinstance(face_size, int):
@@ -72,7 +151,19 @@ class Detector:
         else:
             self.face_size = face_size
 
-    def detect(self, image, return_faces=False):
+    def detect(self, image: np.ndarray, return_faces=False) -> tuple or list:
+        """
+        Detect image.
+
+        Args:
+            image (np.ndarray): Original image.
+            return_faces (bool, optional): If set to True, resized faces is returned.
+                                           Defaults to False.
+
+        Returns:
+            tuple or list: A list of bounding box [x1, y1, x2, y2]. If return_faces is
+                           True, return a tuple of bounding box list and face list.
+        """
         h, w = image.shape[:2]
         inp = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         inp = cv2.resize(inp, (320, 320))
@@ -100,18 +191,42 @@ class Detector:
 
 
 class Recognizer:
-    def __init__(self, model_path, labels, top_k, threshold):
+    """
+    Face detector class.
+    ====================
+
+    Simplify the PyCoral API classification model syntax.
+    """
+    def __init__(self, model_path: str, labels: str, top_k=3, threshold=0.5):
+        """
+        [summary]
+
+        Args:
+            model_path (str): Path to tflite face recognize model.
+            labels (str): Path to label file.
+            top_k (int, optional): Top k highest probability. Defaults to 3.
+            threshold (float, optional): Threshold. Defaults to 0.5.
+        """
         if model_path is None or labels is None:
             self.model = None
         else:
             with open(labels, 'r') as file:
                 self.labels = file.read().split('\n')
             self.model = make_interpreter(model_path)
-            self.model.allocate_tensors()
             self.top_k = top_k
             self.threshold = threshold
 
-    def recognize(self, images):
+    def recognize(self, images: list) -> list:
+        """
+        Recognize face from images.
+
+        Args:
+            images (list): List of input images to recoginize.
+
+        Returns:
+            list: List of dictionaries of ``name: prob`` with maximum of ``k`` items.
+                  Number of dictionaries equal to number of input images
+        """
         if self.model is not None:
             names = []
             for image in images:

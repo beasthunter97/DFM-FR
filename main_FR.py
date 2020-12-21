@@ -1,5 +1,5 @@
 """
-This file is execute by the ``boot_script.sh``.
+This file is executed by the ``boot_script.sh``.
 
 It contains of the main and sub processes.
 """
@@ -19,7 +19,18 @@ from lib.utils import ConfigHandler, draw, load, save
 # endregion
 
 
-def server_process(data_queue):
+def server_process(data_queue: Queue):
+    """
+    ``Server`` process.
+    ===================
+
+    Send data received from ``Main`` process to `DFM server`.
+
+    Args:
+        data_queue (Queue): Shared variable with ``Main`` process. The ``Main`` process
+                            puts data to this variable and the ``Server`` process will
+                            receive and send it to `DFM Server`.
+    """
     stop = False
     while True:
         if data_queue.empty():
@@ -51,7 +62,17 @@ def server_process(data_queue):
         time.sleep(config.server['time_out'])
 
 
-def temp_process(temp):
+def temp_process(temp: c_uint8):
+    """
+    ``Temp`` process.
+    =================
+
+    Check device's temperature and return the value to ``Main`` process.
+
+    Args:
+        temp (c_uint8): Shared variable with ``Main`` process. The ``Main`` process read
+                        device's temperature from this variable.
+    """
     while True:
         time.sleep(config.temp['time_check_temp'])
         if not temp.value:
@@ -81,20 +102,22 @@ def temp_process(temp):
         print('[DEVICE] Status: ', device_status)
 
 
-def main_process(data_queue: 'Queue', temp: 'c_uint8') -> None:
+def main_process(data_queue: 'Queue', temp: 'c_uint8'):
     """
     ``Main`` process.
+    =================
+
     Performs `detection`, `recognition` and `tracking` from video stream and send
     infomation to ``Server`` process.
 
     Args:
-        data_queue (Queue): Shared variable with ``Server`` process. The ``Main``
-                            process put data to it and the ``Server`` process will
-                            send receive it and send it to `DFM Server`
-        temp (c_uint8): Shared variable with ``Temp`` process. The ``Main`` process
-                        read device's temperature from this variable.
+        data_queue (Queue): Shared variable with ``Server`` process. The ``Main`` process
+                            put data to this variable and the ``Server`` process will
+                            receive and send it to `DFM Server`.
+        temp (c_uint8): Shared variable with ``Temp`` process. The ``Main`` process read
+                        device's temperature from this variable.
     """
-    def stop() -> None:
+    def stop():
         """
         Necessary procedure to stop the program.
         """
@@ -102,7 +125,7 @@ def main_process(data_queue: 'Queue', temp: 'c_uint8') -> None:
         stream.stop()
         data_queue.put('stop')
 
-    def init_constant(config) -> None:
+    def init_constant(config):
         """
         Initialize constants and objects for the main process.
         """

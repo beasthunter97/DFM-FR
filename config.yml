@@ -1,4 +1,4 @@
-direction: in
+direction: out
 
 display: True
 
@@ -36,10 +36,10 @@ tracking:
     skip_frame: 3
     max_send: 5
   in:
-    min_dist: 10
+    max_ratio: 0.5
     min_appear: 3
     max_disappear: 8
   out:
-    min_dist: 10
+    max_ratio: 0.5
     min_appear: 3
     max_disappear: 8

@@ -9,6 +9,12 @@ import yaml
 
 
 class ConfigHandler:
+    """
+    Config Handler class.
+    =====================
+
+    Read & write config file.
+    """
     def read(self, file_path='config.yml', keywords=[]):
         self.file_path = file_path
         if not hasattr(self, 'config'):
@@ -78,8 +84,17 @@ def name_gen(length=16, root='temp/', ext='', rand=False):
     return file_name + ext
 
 
-def get_size(obj, seen=None):
-    """Recursively finds size of objects"""
+def get_size(obj, seen=None) -> int:
+    """
+    Recursively find size of an object.
+
+    Args:
+        obj ([type]): Input object.
+        seen ([type], optional): Size of the object is counted or not. Defaults to None.
+
+    Returns:
+        int: Size of the input object.
+    """
     size = sys.getsizeof(obj)
     if seen is None:
         seen = set()
