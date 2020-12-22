@@ -147,7 +147,7 @@ def main_process(data_queue: 'Queue', temp: 'c_uint8'):
     while True:
         # region CHECK TEMPERATURE
         if temp.value > config.temp['max_temp']:
-            print('Overheated, sleep for %d seconds' % config.oper['overheated_sleep'])
+            print('Overheated, sleep for %d seconds' % config.temp['overheated_sleep'])
             time.sleep(config.temp['overheated_sleep'])
             temp.value = 1
         # endregion
