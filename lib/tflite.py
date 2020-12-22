@@ -224,10 +224,14 @@ class Recognizer:
 
         Returns:
 <<<<<<< HEAD
+<<<<<<< HEAD
             list: List of dictionaries of ``name: prob`` with maximum of `k` items.\
 =======
             list: List of dictionaries of ``name: prob`` with maximum of ``k`` items.\
 >>>>>>> 6094fe9... Squashed commit of the following:
+=======
+            list: List of dictionaries of ``name: prob`` with maximum of ``k`` items.\
+>>>>>>> 6094fe9e89aa5fd34d02f7378902f673c8bda164
                   Number of dictionaries equal to number of input images
         """
         if self.model is not None:
