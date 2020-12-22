@@ -147,7 +147,11 @@ def main_process(data_queue: 'Queue', temp: 'c_uint8'):
     while True:
         # region CHECK TEMPERATURE
         if temp.value > config.temp['max_temp']:
+<<<<<<< HEAD
             print('Overheated, sleep for %d seconds' % config.temp['overheated_sleep'])
+=======
+            print('Overheated, sleep for %d seconds' % config.oper['overheated_sleep'])
+>>>>>>> 6094fe9... Squashed commit of the following:
             time.sleep(config.temp['overheated_sleep'])
             temp.value = 1
         # endregion

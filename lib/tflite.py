@@ -223,7 +223,11 @@ class Recognizer:
             images (list): List of input images to recoginize.
 
         Returns:
+<<<<<<< HEAD
             list: List of dictionaries of ``name: prob`` with maximum of `k` items.\
+=======
+            list: List of dictionaries of ``name: prob`` with maximum of ``k`` items.\
+>>>>>>> 6094fe9... Squashed commit of the following:
                   Number of dictionaries equal to number of input images
         """
         if self.model is not None:
