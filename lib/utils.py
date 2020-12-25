@@ -5,7 +5,6 @@ import sys
 import time
 
 import cv2
-import numpy as np
 import yaml
 
 
@@ -65,7 +64,7 @@ class ConfigHandler:
         write_yaml(file_path, data)
 
 
-def write_yaml(file_path: str, data: 'any'):
+def write_yaml(file_path, data):
     """
     Write yaml file.
 
@@ -77,7 +76,7 @@ def write_yaml(file_path: str, data: 'any'):
         yaml.dump(data, file)
 
 
-def draw(image: np.ndarray, boxes: list, names: list, in_out=None):
+def draw(image, boxes, names, in_out=None):
     """
     Draw bounding boxes and names on frame.
 
@@ -99,7 +98,7 @@ def draw(image: np.ndarray, boxes: list, names: list, in_out=None):
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
 
-def name_gen(length=16, root='temp/', ext='', rand=False) -> str:
+def name_gen(length=16, root='temp/', ext='', rand=False):
     """
     Generate name for file.
 
@@ -132,7 +131,7 @@ def name_gen(length=16, root='temp/', ext='', rand=False) -> str:
     return file_name + ext
 
 
-def get_size(obj, seen=None) -> int:
+def get_size(obj, seen=None):
     """
     Recursively find size of an object.
 
@@ -161,7 +160,7 @@ def get_size(obj, seen=None) -> int:
     return size
 
 
-def save(data: dict):
+def save(data):
     """
     Temporarily save the data to file in ``temp/`` folder.
 

@@ -6,7 +6,7 @@ import numpy as np
 from scipy.spatial import distance
 
 
-def image_encode(img: np.ndarray) -> str:
+def image_encode(img) -> str:
     """
     Encode image to string before export to data and sent to server.
 
@@ -26,8 +26,8 @@ class Tracker:
 
     Track, count and stack identities.
     """
-    def __init__(self, direction: str, max_ratio: float, min_appear: int, skip_frame: int,
-                 max_disappear: int, max_img_stack: int, max_send: int):
+    def __init__(self, direction, max_ratio, min_appear, skip_frame, max_disappear,
+                 max_img_stack, max_send):
         """
         Class initialize.
 
@@ -58,7 +58,7 @@ class Tracker:
         except FileNotFoundError:
             self.unknown = 0
 
-    def track(self, boxes: list, preds: list, faces: list) -> tuple:
+    def track(self, boxes, preds, faces):
         """
         Track faces on new frame.
 
@@ -77,7 +77,7 @@ class Tracker:
         self.update()
         return self.new_obj, self.data, self.in_out
 
-    def create_obj(self, boxes: list, preds: list, faces: list):
+    def create_obj(self, boxes, preds, faces):
         """
         Create new tracking object.
 
@@ -196,7 +196,7 @@ class Tracker:
                 'disappear': 0
             })
 
-    def export_obj(self, obj: dict):
+    def export_obj(self, obj):
         """
         Export object to server.
 
@@ -220,7 +220,7 @@ class Tracker:
             'capture': capture
         }
 
-    def get_true_names(self, preds: dict) -> str:
+    def get_true_names(self, preds):
         """
         Return name of the identity from the predicted ``name``: ``confidence``.
 

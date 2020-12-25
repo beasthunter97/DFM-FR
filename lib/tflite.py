@@ -12,7 +12,7 @@ import tflite_runtime.interpreter as tflite
 EDGETPU_SHARED_LIB = 'libedgetpu.so.1'
 
 
-def make_interpreter(model_file: str) -> tflite.Interpreter:
+def make_interpreter(model_file):
     """
     Make tflite interpreter.
 
@@ -34,7 +34,7 @@ def make_interpreter(model_file: str) -> tflite.Interpreter:
     return interpreter
 
 
-def set_input(interpreter: tflite.Interpreter, image: np.ndarray):
+def set_input(interpreter, image):
     """
     Set image as the tflte interpreter's input.
 
@@ -46,7 +46,7 @@ def set_input(interpreter: tflite.Interpreter, image: np.ndarray):
     input_tensor(interpreter)[:, :] = image
 
 
-def input_image_size(interpreter: tflite.Interpreter) -> tuple:
+def input_image_size(interpreter):
     """
     Check input image's size required by the interpreter
 
@@ -60,7 +60,7 @@ def input_image_size(interpreter: tflite.Interpreter) -> tuple:
     return width, height, channels
 
 
-def input_tensor(interpreter: tflite.Interpreter) -> np.ndarray:
+def input_tensor(interpreter):
     """
     Returns input tensor view as numpy ``array`` of shape (height, width, channel).
 
@@ -74,7 +74,7 @@ def input_tensor(interpreter: tflite.Interpreter) -> np.ndarray:
     return interpreter.tensor(tensor_index)()[0]
 
 
-def output_tensor(interpreter: tflite.Interpreter, i: int, to_int=False) -> np.ndarray:
+def output_tensor(interpreter, i, to_int=False):
     """
     Returns dequantized output tensor if quantized before.
     `Important change is made to avoid numerical error from google's original API.`
@@ -101,7 +101,7 @@ def output_tensor(interpreter: tflite.Interpreter, i: int, to_int=False) -> np.n
     return scale * (output_data - zero_point)
 
 
-def fix_box(x1: int, y1: int, x2: int, y2: int) -> tuple:
+def fix_box(x1, y1, x2, y2):
     """
     Fix the face detection's bounding box to a square bounding box.
 
@@ -133,7 +133,7 @@ class Detector:
 
     Simplify the PyCoral API detection model syntax.
     """
-    def __init__(self, model_path: str, min_face_size: int, threshold=0.3, face_size=96):
+    def __init__(self, model_path, min_face_size, threshold=0.3, face_size=96):
         """
         Class initialize.
 
@@ -151,7 +151,7 @@ class Detector:
         else:
             self.face_size = face_size
 
-    def detect(self, image: np.ndarray, return_faces=False) -> tuple or list:
+    def detect(self, image, return_faces=False):
         """
         Detect image.
 
@@ -196,7 +196,7 @@ class Recognizer:
 
     Simplify the PyCoral API classification model syntax.
     """
-    def __init__(self, model_path: str, labels: str, top_k=3, threshold=0.5):
+    def __init__(self, model_path, labels, top_k=3, threshold=0.5):
         """
         [summary]
 
@@ -215,7 +215,7 @@ class Recognizer:
             self.top_k = top_k
             self.threshold = threshold
 
-    def recognize(self, images: list) -> list:
+    def recognize(self, images):
         """
         Recognize face from images.
 
@@ -223,7 +223,7 @@ class Recognizer:
             images (list): List of input images to recoginize.
 
         Returns:
-            list: List of dictionaries of ``name: prob`` with maximum of `k` items.\
+            list: List of dictionaries with maximum of `k` items ``name: prob``.\
                   Number of dictionaries equal to number of input images
         """
         if self.model is not None:
