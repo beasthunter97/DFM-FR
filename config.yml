@@ -1,36 +1,36 @@
-direction: out
+direction: out # camera direction for reading config and server identity
 
-display: True
+display: True # whether to display frame output
 
 source:
-  type: cam
+  type: cam # from camera or link/path to source
   out: rtsp://192.168.200.80:555/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream
   in: rtsp://192.168.200.79:554/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream
   # in: rtsp://192.168.200.78:556/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream
 
-detection:
+detection: # Face detection setting
   model_path: models/ssd_mobilenet_v2_face_quant_postprocess_edgetpu.tflite
   min_face_size: 96
   threshold: 0.3
   face_size: 112
 
-recognition:
+recognition: # Face recognition setting
   model_path: #models/model_quant_edgetpu.tflite
   labels: #models/labels.txt
   top_k: 3
   threshold: 0.3
 
-server:
+server: # Server process setting
   url: http://htv.ai.dfm-engineering.com/api/v1/admin/public/uplink
   time_out: 2
 
-temp:
+temp: # Temp process setting
   max_temp: 60
   time_check_temp: 20
   overheated_sleep: 5
   url: http://htv.ai.dfm-engineering.com/api/v1/admin/public/device-info
 
-tracking:
+tracking: # Tracking algorithm setting
   shared:
     max_img_stack: 10
     skip_frame: 3

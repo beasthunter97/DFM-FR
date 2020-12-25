@@ -19,7 +19,7 @@ from lib.utils import ConfigHandler, draw, load, save
 # endregion
 
 
-def server_process(data_queue: Queue):
+def server_process(data_queue):
     """
     ``Server`` process.
 
@@ -61,7 +61,7 @@ def server_process(data_queue: Queue):
         time.sleep(config.server['time_out'])
 
 
-def temp_process(temp: c_uint8):
+def temp_process(temp):
     """
     ``Temp`` process.
 
@@ -100,7 +100,7 @@ def temp_process(temp: c_uint8):
         print('[DEVICE] Status: ', device_status)
 
 
-def main_process(data_queue: 'Queue', temp: 'c_uint8'):
+def main_process(data_queue, temp, export_doc=False):
     """
     ``Main`` process.
 
@@ -125,6 +125,9 @@ def main_process(data_queue: 'Queue', temp: 'c_uint8'):
     def init_constant(config):
         """
         Initialize constants and objects for the main process.
+
+        Args:
+            config (ConfigHandler): All config.
         """
         global src, stream, detector, recognizer, tracker
         direction = config.direction
@@ -135,6 +138,7 @@ def main_process(data_queue: 'Queue', temp: 'c_uint8'):
             VS = WebcamVideoStream
         else:
             VS = FileVideoStream
+            src = config.source['type']
         stream = VS(src).start()
         detector = Detector(**config.detection)
         recognizer = Recognizer(**config.recognition)
