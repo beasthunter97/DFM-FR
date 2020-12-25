@@ -9,7 +9,7 @@ User=mendel
 WorkingDirectory=/home/mendel/coral/DFM_FR/
 Environment=DISPLAY=:0
 ExecStart=/bin/bash /home/mendel/coral/DFM_FR/boot_script.sh
-Restart=on-failure
+Restart=always
 RestartSec=1
 
 [Install]
